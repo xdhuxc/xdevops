@@ -1,3 +1,18 @@
-#left_menu {
-    margin: 0;
+
+.out-content{
+    width: 100%;
+}
+
+.container-left {
+    float: left;
+    width: 20%;
+}
+.container-right {
+    float: left;
+    width: 80%;
+}
+
+ul, li {
+    text-decoration: none;
+    display: block;
 }

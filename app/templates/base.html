@@ -5,11 +5,31 @@
 {% endblock %}
 
 {% block head %}  <!-- 定义图标 -->
-{{ super() }}
+    {{ super() }}
     <link rel="shortcut icon" href="{{ url_for('static', filename='image/favicon.ico') }}" type="image/x-icon">
     <link rel="icon" href="{{ url_for('static', filename='image/favicon.ico') }}" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/animate.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/animation.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/houtai.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/public.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/smartMenu.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/swiper.3.1.7.css') }}">
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/darkly/bootstrap.min.css">
+{% endblock %}
+
+{% block scripts %}   app/static/js/contabs.js
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/contabs.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.cookie.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.nicescroll.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery-smartMenu-min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/maintabs.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/swiper.3.1.7.jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/swiper.animate1.0.2.min.js') }}"></script>
 {% endblock %}
 
 {% block navbar %} <!--上方导航-->

@@ -9,6 +9,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
 
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'xdhuxc'
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
+
     def __init__(self):
         pass
 
@@ -25,7 +28,7 @@ class DevelopmentConfig(Config):
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('PROD_DATABASE_URL') or \
-                              'sqlite:///' + os.path.join(basedir, 'prod-data.sqlite')
+        'sqlite:///' + os.path.join(basedir, 'prod-data.sqlite')
 
 
 class TestingConfig(Config):
@@ -33,7 +36,7 @@ class TestingConfig(Config):
     # 在测试配置中禁用CSRF保护
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
-                              'sqlite:///' + os.path.join(basedir, 'test-data.sqlite')
+        'sqlite:///' + os.path.join(basedir, 'test-data.sql')
 
 
 config = {

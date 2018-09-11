@@ -9,12 +9,19 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='image/favicon.ico') }}" type="image/x-icon">
     <link rel="icon" href="{{ url_for('static', filename='image/favicon.ico') }}" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/darkly/bootstrap.min.css">
 {% endblock %}
 
-{% block navbar %} <!--导航-->
+{% block navbar %} <!--上方导航-->
 <div class="navbar navbar-inverse" role="navigation">
     <div class="container">
         <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">切换导航</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+            </button>
             <a class="navbar-brand" href="{{ url_for('main.index') }}">DevOps</a>
         </div>
         <div class="navbar-collapse collapse">
@@ -33,15 +40,30 @@
 </div>
 {% endblock %}
 
-{% block left_menu %}
-<div class="container-fluid">
-    <div>
-        <h3>ABCD</h3>
+{% block content %}
+<!-- 左侧菜单 -->
+<div class="navbar navbar-default" role="navigation" id="left_menu">
+    <div class="collapse navbar-collapse" id="example-navbar-collapse">
+        <ul class="row">
+         <li><a href="#">iOS</a></li>
+         <li><a href="#">SVN</a></li>
+         <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+               Java <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+               <li><a href="#">jmeter</a></li>
+               <li><a href="#">EJB</a></li>
+               <li><a href="#">Jasper Report</a></li>
+               <li class="divider"></li>
+               <li><a href="#">分离的链接</a></li>
+               <li class="divider"></li>
+               <li><a href="#">另一个分离的链接</a></li>
+            </ul>
+         </li>
+      </ul>
     </div>
 </div>
-{% endblock %}
-
-{% block content %}
 <div class="container">
     {% for message in get_flashed_messages() %}
         <div class="alert alert-warning">
@@ -55,3 +77,5 @@
     {% endblock %}
 </div>
 {% endblock %}
+
+

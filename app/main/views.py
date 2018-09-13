@@ -25,15 +25,8 @@ def get_pods():
         pod_dict['pod_name'] = item.metadata.name
         pod_dict['pod_namespace'] = item.metadata.namespace
         pod_dict['pod_phase'] = item.status.phase
-
-        containers = item.status.container_statuses
-
-
-        if item.metadata.name == 'kube-dns-v8-9wxkw':
-            print(item)
-        print(item.status.pod_ip)
-        print(item.metadata.namespace)
-        print(item.metadata.name)
-    return render_template('pod.html')
+        pod_list.append(pod_dict)
+        pod_dict = {}
+    return render_template('pod.html', pod_list=pod_list)
 
 

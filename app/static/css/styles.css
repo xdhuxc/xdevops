@@ -1,18 +1,17 @@
-
-.out-content{
-    width: 100%;
-}
-
-.container-left {
+div.pod-name {
+    font-weight: bold;
     float: left;
-    width: 20%;
-}
-.container-right {
-    float: left;
-    width: 80%;
+    display: inline-block;
 }
 
-ul, li {
-    text-decoration: none;
-    display: block;
+div.pod-namespace {
+    float: left;
+    display: inline-block;
+}
+
+div.pod-phase {
+    display: inline-block;
+    float: left;
+    margin-left: 48px;
+    min-height: 48px;
 }

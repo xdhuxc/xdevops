@@ -6,5 +6,21 @@
     </head>
     <body>
         <h3>pod管理</h3>
+
+
+        <table>
+            <tr>
+                <td>名称</td>
+                <td>命名空间</td>
+                <td>状态</td>
+            </tr>
+            {% for item in pod_list %}
+                <tr>
+                    <td style="width: 400px">{{ item['pod_name'] }}</td>
+                    <td style="width: 200px">{{ item['pod_namespace'] }}</td>
+                    <td style="width: 200px">{{ item['pod_phase'] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
     </body>
 </html>

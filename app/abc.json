@@ -1,0 +1,612 @@
+{
+  'api_version': None,
+  'kind': None
+  'metadata': {
+    'annotations': {
+      u
+      'kubernetes.io/created-by': '{"kind":"SerializedReference","apiVersion":"v1","reference":{"kind":"ReplicationController","namesp
+      ace
+      ":"
+      kube-system
+      ","
+      name
+      ":"
+      kube-dns-v8
+      ","
+      uid
+      ":"
+      f1de8dd0-93c3-11e8-845e-062668001f15
+      ","
+      apiVersion
+      ":"
+      v1
+      ","
+      resourceVersion
+      ":"
+      693
+      "}}\n'},
+      'cluster_name': None,
+      'creation_timestamp': datetime.datetime(2018,
+      7,
+      30,
+      6,
+      44,
+      2,
+      tzinfo=tzutc()),
+      'deletion_grace_period_seconds': None,
+      'deletion_timestamp': None,
+      'finalizers': None,
+      'generate_name': 'kube-dns-v8-',
+      'generation': None,
+      'initializers': None,
+      'labels': {
+        u
+        'k8s-app': 'kube-dns',
+        u
+        'kubernetes.io/cluster-service': 'true',
+        u
+        'version': 'v8'
+      },
+      'name': 'kube-dns-v8-9wxkw',
+      'namespace': 'kube-system',
+      'owner_references': [
+        {
+          'api_version': 'v1',
+          'block_owner_deletion': True,
+          'controller': True,
+          'kind': 'ReplicationController',
+          'name': 'kube-dns-v8',
+          'uid': 'f1de8dd0-93c3-11e8-845e-062668001f15'
+        }
+      ],
+      'resource_version': '4626809',
+      'self_link': '/api/v1/namespaces/kube-system/pods/kube-dns-v8-9wxkw',
+      'uid': 'f1e3f399-93c3-11e8-845e-062668001f15'
+    },
+    'spec': {
+      'active_deadline_seconds': None,
+      'affinity': None,
+      'automount_service_account_token': None,
+      'containers': [
+        {
+          'args': None,
+          'command': [
+            '/usr/local/bin/etcd',
+            '-data-dir',
+            '/var/etcd/data',
+            '-listen-client-urls',
+            'http://127.0.0.1:2379,http://127.0.0.1:4001',
+            '-advertise-client-urls',
+            'http://127.0.0.1:2379,http://127.0.0.1:4001',
+            '-initial-cluster-token',
+            'skydns-etcd'
+          ],
+          'env': None,
+          'env_from': None,
+          'image': 'yonyoucloud-kubernetes/etcd:v3.1.10',
+          'image_pull_policy': 'IfNotPresent',
+          'lifecycle': None,
+          'liveness_probe': None,
+          'name': 'etcd',
+          'ports': None,
+          'readiness_probe': None,
+          'resources': {
+            'limits': {
+              u
+              'cpu': '100m',
+              u
+              'memory': '50Mi'
+            },
+            'requests': {
+              u
+              'cpu': '100m',
+              u
+              'memory': '50Mi'
+            }
+          },
+          'security_context': None,
+          'stdin': None,
+          'stdin_once': None,
+          'termination_message_path': '/dev/termination-log',
+          'termination_message_policy': 'File',
+          'tty': None,
+          'volume_devices': None,
+          'volume_mounts': [
+            {
+              'mount_path': '/var/etcd/data',
+              'mount_propagation': None,
+              'name': 'etcd-storage',
+              'read_only': None,
+              'sub_path': None
+            },
+            {
+              'mount_path': '/var/run/secrets/kubernetes.io/serviceaccount',
+              'mount_propagation': None,
+              'name': 'default-token-2mjjp',
+              'read_only': True,
+              'sub_path': None
+            }
+          ],
+          'working_dir': None
+        },
+        {
+          'args': [
+            '-domain=kube.local'
+          ],
+          'command': None,
+          'env': None,
+          'env_from': None,
+          'image': 'yonyoucloud-kubernetes/kube2sky:1.11',
+          'image_pull_policy': 'IfNotPresent',
+          'lifecycle': None,
+          'liveness_probe': None,
+          'name': 'kube2sky',
+          'ports': None,
+          'readiness_probe': None,
+          'resources': {
+            'limits': {
+              'cpu': '100m',
+              'memory': '50Mi'
+            },
+            'requests': {
+              'cpu': '100m',
+              'memory': '50Mi'
+            }
+          },
+          'security_context': None,
+          'stdin': None,
+          'stdin_once': None,
+          'termination_message_path': '/dev/termination-log',
+          'termination_message_policy': 'File',
+          'tty': None,
+          'volume_devices': None,
+          'volume_mounts': [
+            {
+              'mount_path': '/var/run/secrets/kubernetes.io/serviceaccount',
+              'mount_propagation': None,
+              'name': 'default-token-2mjjp',
+              'read_only': True,
+              'sub_path': None
+            }
+          ],
+          'working_dir': None
+        },
+        {
+          'args': [
+            '-machines=http://localhost:4001',
+            '-addr=0.0.0.0:53',
+            '-domain=kube.local'
+          ],
+          'command': None,
+          'env': None,
+          'env_from': None,
+          'image': 'yonyoucloud-kubernetes/skydns:latest',
+          'image_pull_policy': 'IfNotPresent',
+          'lifecycle': None,
+          'liveness_probe': {
+            '_exec': None,
+            'failure_threshold': 3,
+            'http_get': {
+              'host': None,
+              'http_headers': None,
+              'path': '/healthz',
+              'port': 8080,
+              'scheme': 'HTTP'
+            },
+            'initial_delay_seconds': 30,
+            'period_seconds': 10,
+            'success_threshold': 1,
+            'tcp_socket': None,
+            'timeout_seconds': 5
+          },
+          'name': 'skydns',
+          'ports': [
+            {
+              'container_port': 53,
+              'host_ip': None,
+              'host_port': None,
+              'name': 'dns',
+              'protocol': 'UDP'
+            },
+            {
+              'container_port': 53,
+              'host_ip': None,
+              'host_port': None,
+              'name': 'dns-tcp',
+              'protocol': 'TCP'
+            }
+          ],
+          'readiness_probe': None,
+          'resources': {
+            'limits': {
+              u
+              'cpu': '100m',
+              u
+              'memory': '50Mi'
+            },
+            'requests': {
+              u
+              'cpu': '100m',
+              u
+              'memory': '50Mi'
+            }
+          },
+          'security_context': None,
+          'stdin': None,
+          'stdin_once': None,
+          'termination_message_path': '/dev/termination-log',
+          'termination_message_policy': 'File',
+          'tty': None,
+          'volume_devices': None,
+          'volume_mounts': [
+            {
+              'mount_path': '/var/run/secrets/kubernetes.io/serviceaccount',
+              'mount_propagation': None,
+              'name': 'default-token-2mjjp',
+              'read_only': True,
+              'sub_path': None
+            }
+          ],
+          'working_dir': None
+        },
+        {
+          'args': [
+            '-cmd=nslookup kubernetes.default.svc.kube.local localhost >/dev/null',
+            '-port=8080'
+          ],
+          'command': None,
+          'env': None,
+          'env_from': None,
+          'image': 'yonyoucloud-kubernetes/exechealthz:1.0',
+          'image_pull_policy': 'IfNotPresent',
+          'lifecycle': None,
+          'liveness_probe': None,
+          'name': 'healthz',
+          'ports': [
+            {
+              'container_port': 8080,
+              'host_ip': None,
+              'host_port': None,
+              'name': None,
+              'protocol': 'TCP'
+            }
+          ],
+          'readiness_probe': None,
+          'resources': {
+            'limits': {
+              u
+              'cpu': '10m',
+              u
+              'memory': '20Mi'
+            },
+            'requests': {
+              u
+              'cpu': '10m',
+              u
+              'memory': '20Mi'
+            }
+          },
+          'security_context': None,
+          'stdin': None,
+          'stdin_once': None,
+          'termination_message_path': '/dev/termination-log',
+          'termination_message_policy': 'File',
+          'tty': None,
+          'volume_devices': None,
+          'volume_mounts': [
+            {
+              'mount_path': '/var/run/secrets/kubernetes.io/serviceaccount',
+              'mount_propagation': None,
+              'name': 'default-token-2mjjp',
+              'read_only': True,
+              'sub_path': None
+            }
+          ],
+          'working_dir': None
+        }
+      ],
+      'dns_config': None,
+      'dns_policy': 'Default',
+      'host_aliases': None,
+      'host_ipc': None,
+      'host_network': None,
+      'host_pid': None,
+      'hostname': None,
+      'image_pull_secrets': None,
+      'init_containers': None,
+      'node_name': 'k8s-master',
+      'node_selector': None,
+      'priority': None,
+      'priority_class_name': None,
+      'readiness_gates': None,
+      'restart_policy': 'Always',
+      'scheduler_name': 'default-scheduler',
+      'security_context': {
+        'fs_group': None,
+        'run_as_group': None,
+        'run_as_non_root': None,
+        'run_as_user': None,
+        'se_linux_options': None,
+        'supplemental_groups': None,
+        'sysctls': None
+      },
+      'service_account': 'default',
+      'service_account_name': 'default',
+      'share_process_namespace': None,
+      'subdomain': None,
+      'termination_grace_period_seconds': 30,
+      'tolerations': [
+        {
+          'effect': 'NoExecute',
+          'key': 'node.alpha.kubernetes.io/notReady',
+          'operator': 'Exists',
+          'toleration_seconds': 300,
+          'value': None
+        },
+        {
+          'effect': 'NoExecute',
+          'key': 'node.alpha.kubernetes.io/unreachable',
+          'operator': 'Exists',
+          'toleration_seconds': 300,
+          'value': None
+        }
+      ],
+      'volumes': [
+        {
+          'aws_elastic_block_store': None,
+          'azure_disk': None,
+          'azure_file': None,
+          'cephfs': None,
+          'cinder': None,
+          'config_map': None,
+          'downward_api': None,
+          'empty_dir': {
+            'medium': None,
+            'size_limit': None
+          },
+          'fc': None,
+          'flex_volume': None,
+          'flocker': None,
+          'gce_persistent_disk': None,
+          'git_repo': None,
+          'glusterfs': None,
+          'host_path': None,
+          'iscsi': None,
+          'name': 'etcd-storage',
+          'nfs': None,
+          'persistent_volume_claim': None,
+          'photon_persistent_disk': None,
+          'portworx_volume': None,
+          'projected': None,
+          'quobyte': None,
+          'rbd': None,
+          'scale_io': None,
+          'secret': None,
+          'storageos': None,
+          'vsphere_volume': None
+        },
+        {
+          'aws_elastic_block_store': None,
+          'azure_disk': None,
+          'azure_file': None,
+          'cephfs': None,
+          'cinder': None,
+          'config_map': None,
+          'downward_api': None,
+          'empty_dir': None,
+          'fc': None,
+          'flex_volume': None,
+          'flocker': None,
+          'gce_persistent_disk': None,
+          'git_repo': None,
+          'glusterfs': None,
+          'host_path': None,
+          'iscsi': None,
+          'name': 'default-token-2mjjp',
+          'nfs': None,
+          'persistent_volume_claim': None,
+          'photon_persistent_disk': None,
+          'portworx_volume': None,
+          'projected': None,
+          'quobyte': None,
+          'rbd': None,
+          'scale_io': None,
+          'secret': {
+            'default_mode': 420,
+            'items': None,
+            'optional': None,
+            'secret_name': 'default-token-2mjjp'
+          },
+          'storageos': None,
+          'vsphere_volume': None
+        }
+      ]
+    },
+    'status': {
+      'conditions': [
+        {
+          'last_probe_time': None,
+          'last_transition_time': datetime.datetime(2018,
+          7,
+          30,
+          6,
+          44,
+          2,
+          tzinfo=tzutc()),
+          'message': None,
+          'reason': None,
+          'status': 'True',
+          'type': 'Initialized'
+        },
+        {
+          'last_probe_time': None,
+          'last_transition_time': datetime.datetime(2018,
+          8,
+          11,
+          9,
+          13,
+          25,
+          tzinfo=tzutc()),
+          'message': None,
+          'reason': None,
+          'status': 'True',
+          'type': 'Ready'
+        },
+        {
+          'last_probe_time': None,
+          'last_transition_time': datetime.datetime(2018,
+          7,
+          30,
+          6,
+          44,
+          2,
+          tzinfo=tzutc()),
+          'message': None,
+          'reason': None,
+          'status': 'True',
+          'type': 'PodScheduled'
+        }
+      ],
+      'container_statuses': [
+        {
+          'container_id': 'docker://95054e9ec8211a283e5b5e2fe271687cbc8a6febc28b6a58811871c9c70abf26',
+          'image': 'yonyoucloud-kubernetes/etcd:v3.1.10',
+          'image_id': 'docker://sha256:47bb9dd99916eb8402af6039f66bcbc6f73fdc0db0d507dd320eb8649d88a250',
+          'last_state': {
+            'running': None,
+            'terminated': None,
+            'waiting': None
+          },
+          'name': 'etcd',
+          'ready': True,
+          'restart_count': 1,
+          'state': {
+            'running': {
+              'started_at': datetime.datetime(2018,
+              8,
+              11,
+              9,
+              13,
+              14,
+              tzinfo=tzutc())
+            },
+            'terminated': None,
+            'waiting': None
+          }
+        },
+        {
+          'container_id': 'docker://1cc405561a9ed15554658b1237339273b57ae5e68c85f4497741fa0b16248e7e',
+          'image': 'yonyoucloud-kubernetes/exechealthz:1.0',
+          'image_id': 'docker://sha256:82a141f5d06d2136e324e44e90225c672509d6c453b6a96911d3a5b880a9e013',
+          'last_state': {
+            'running': None,
+            'terminated': None,
+            'waiting': None
+          },
+          'name': 'healthz',
+          'ready': True,
+          'restart_count': 1,
+          'state': {
+            'running': {
+              'started_at': datetime.datetime(2018,
+              8,
+              11,
+              9,
+              13,
+              21,
+              tzinfo=tzutc())
+            },
+            'terminated': None,
+            'waiting': None
+          }
+        },
+        {
+          'container_id': 'docker://45538bf87293a303e784c1f2b4c9d05613dc26e284a9ff714e0a4ab78952d903',
+          'image': 'yonyoucloud-kubernetes/kube2sky:1.11',
+          'image_id': 'docker://sha256:2c2534f5ba34995ea4a9eb0d7728d24db827b75ee40f399fb10642cdfcab7559',
+          'last_state': {
+            'running': None,
+            'terminated': None,
+            'waiting': None
+          },
+          'name': 'kube2sky',
+          'ready': True,
+          'restart_count': 1,
+          'state': {
+            'running': {
+              'started_at': datetime.datetime(2018,
+              8,
+              11,
+              9,
+              13,
+              19,
+              tzinfo=tzutc())
+            },
+            'terminated': None,
+            'waiting': None
+          }
+        },
+        {
+          'container_id': 'docker://76124acb03d97e0f64f712a77b988c5c9b491f5d6006f946371194e494e9f949',
+          'image': 'yonyoucloud-kubernetes/skydns:latest',
+          'image_id': 'docker://sha256:ed554d01b9826704bae7c5814ca56067775927e6273ec15bc161f44c706b62f7',
+          'last_state': {
+            'running': None,
+            'terminated': {
+              'container_id': 'docker://6cd86574d3d4d7360a9331263fcf431938bd5ebec806c34da58c4101542d0d14',
+              'exit_code': 2,
+              'finished_at': datetime.datetime(2018,
+              9,
+              13,
+              10,
+              14,
+              30,
+              tzinfo=tzutc()),
+              'message': None,
+              'reason': 'Error',
+              'signal': None,
+              'started_at': datetime.datetime(2018,
+              9,
+              11,
+              11,
+              12,
+              32,
+              tzinfo=tzutc())
+            },
+            'waiting': None
+          },
+          'name': 'skydns',
+          'ready': True,
+          'restart_count': 48,
+          'state': {
+            'running': {
+              'started_at': datetime.datetime(2018,
+              9,
+              13,
+              10,
+              14,
+              31,
+              tzinfo=tzutc())
+            },
+            'terminated': None,
+            'waiting': None
+          }
+        }
+      ],
+      'host_ip': '172.20.26.150',
+      'init_container_statuses': None,
+      'message': None,
+      'nominated_node_name': None,
+      'phase': 'Running',
+      'pod_ip': '192.168.235.199',
+      'qos_class': 'Guaranteed',
+      'reason': None,
+      'start_time': datetime.datetime(2018,
+      7,
+      30,
+      6,
+      44,
+      2,
+      tzinfo=tzutc())
+    }
+  }

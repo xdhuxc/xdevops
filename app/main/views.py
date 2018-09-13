@@ -2,20 +2,38 @@
 # -*- coding: utf-8 -*-
 
 
-import requests
-import os
+from flask import render_template
+
+from . import main
+from kubernetes import client
 
 
-basedir = os.path.abspath(os.path.dirname(__file__))
+@main.route('/')
+def index():
+
+    return render_template('index.html')
 
 
-kubernetes_url = 'https://172.20.26.150:6443/api/v1/pods?watch=False'
+@main.route('/get_pods', methods=['GET'])
+def get_pods():
+    pod_list = []
+    pod_dict = {}
+    v1 = client.CoreV1Api()
+
+    result = v1.list_pod_for_all_namespaces(watch=False)
+    for item in result.items:
+        pod_dict['pod_name'] = item.metadata.name
+        pod_dict['pod_namespace'] = item.metadata.namespace
+        pod_dict['pod_phase'] = item.status.phase
+
+        containers = item.status.container_statuses
 
 
-cert = (os.path.join(basedir, 'certificate/apiserver-kubelet-client.crt'),
-                         os.path.join(basedir, 'certificate/apiserver-kubelet-client.key'))
-verify = os.path.join(basedir, 'certificate/ca.crt')
+        if item.metadata.name == 'kube-dns-v8-9wxkw':
+            print(item)
+        print(item.status.pod_ip)
+        print(item.metadata.namespace)
+        print(item.metadata.name)
+    return render_template('pod.html')
 
-resp = requests.get(kubernetes_url, timeout=10, cert=cert, verify=verify)
 
-print(resp)

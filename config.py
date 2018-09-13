@@ -11,6 +11,8 @@ class Config:
 
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'xdhuxc'
     SQLALCHEMY_TRACK_MODIFICATIONS = True
+    KUBERNETES_URL = os.environ.get('KUBERNETES_URL') or 'https://172.20.26.150:6443'
+    HTTP_TIMEOUT = 10
 
     def __init__(self):
         pass

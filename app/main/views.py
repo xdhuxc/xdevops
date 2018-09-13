@@ -1,24 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from flask import render_template
-from ..main import main
 
-from kubernetes import client
-from kubernetes import config
+import requests
+import os
 
 
-@main.route('/', methods=['GET'])
-def index():
-    return render_template('index.html')
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 
-@main.route('/pod')
-def manage_pod():
-    client.Configuration.host = '172.20.26.150'
+kubernetes_url = 'https://172.20.26.150:6443/api/v1/pods?watch=False'
 
-    v1 = client.CoreV1Api()
-    ret = v1.list_pod_for_all_namespaces(watch=False)
-    for item in ret.items():
-        print(item)
-    return render_template('pod.html')
+
+cert = (os.path.join(basedir, 'certificate/apiserver-kubelet-client.crt'),
+                         os.path.join(basedir, 'certificate/apiserver-kubelet-client.key'))
+verify = os.path.join(basedir, 'certificate/ca.crt')
+
+resp = requests.get(kubernetes_url, timeout=10, cert=cert, verify=verify)
+
+print(resp)

@@ -16,24 +16,31 @@
                 <td>资源</td>
                 <td>时间</td>
                 <td>操作</td>
+                <td>终端</td>
             </tr>
             {% for node in node_list %}
                 <tr>
                     <td style="width: 200px">{{ node['node_name'] }}</td>
-                    <td style="width: 200px">
+                    <td style="width: 150px">
                         {% if node['node_status'] == 'True' %}
                             Ready
                         {% else %}
                             NotReady
                         {% endif %}
                     </td>
-                    <td style="width: 200px">{{ node['node_cpu_capacity'] }} / {{ node['node_memory_capacity'] }}</td>
-
+                    <td style="width: 300px">
+                        <span>资源总量：{{ node['node_cpu_capacity'] }} CPUs / {{ node['node_memory_capacity'] }}KB </span>
+                        <br>
+                        <span>已用资源：{{ node['node_cpu_allocatable'] }} CPUs / {{ node['node_memory_allocatable'] }}KB </span>
+                    </td>
                     <td style="width: 200px"> {{ moment(node['node_age']).fromNow(refresh=True)  }}</td>
                     <td style="width: 200px">
                         <a href="#">修改</a>
                         <br>
                         <a href="#">删除</a>
+                    </td>
+                    <td>
+                        <a href="#">控制台</a>
                     </td>
                 </tr>
             {% endfor %}

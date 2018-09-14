@@ -55,14 +55,9 @@ def get_nodes():
             if pressure.type == 'Ready':
                 node_dict['node_status'] = pressure.status
         node_dict['node_cpu_capacity'] = item.status.capacity['cpu']
-        node_dict['node_memory_capacity'] = item.status.capacity['memory']
+        node_dict['node_memory_capacity'] = item.status.capacity['memory'][:-2]
         node_dict['node_cpu_allocatable'] = item.status.allocatable['cpu']
-        node_dict['node_memory_allocatable'] = item.status.allocatable['memory']
-        print(item.metadata.creation_timestamp)
-        print type(item.metadata.creation_timestamp)
-
-
-
+        node_dict['node_memory_allocatable'] = item.status.allocatable['memory'][:-2]
         node_dict['node_age'] = item.metadata.creation_timestamp
 
         node_list.append(node_dict)

@@ -4,15 +4,17 @@
 # date: 2018-09-09
 # description:
 
-import os
-import requests
+import sys
+from kubernetes import config
+from kubernetes import client
 
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
-@main.route('/', methods=['GET'])
-def index():
-    return render_template('index.html')
+config.load_kube_config()
 
-
-@main.route('/pod')
-def manage_pod():
-    return render_template('pod.html')
+kclient = client.CoreV1Api()
+result = kclient.list_node(watch=False)
+type(result)
+for item in result.items:
+    print(item)

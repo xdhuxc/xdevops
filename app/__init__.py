@@ -3,6 +3,7 @@
 
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
+from flask_moment import Moment
 from flask import Flask
 from config import config
 from kubernetes import config as kubernetes_config
@@ -10,6 +11,7 @@ from kubernetes import config as kubernetes_config
 
 bootstrap = Bootstrap()
 db = SQLAlchemy()
+moment = Moment()
 
 
 def create_app(config_name):
@@ -19,6 +21,7 @@ def create_app(config_name):
 
     bootstrap.init_app(app)
     db.init_app(app)
+    moment.init_app(app)
 
     # 加载 kubernetes 配置文件
     kubernetes_config.load_kube_config()

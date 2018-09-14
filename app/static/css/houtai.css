@@ -1,7 +1,7 @@
 html,body{height:100%;}
 .scm{background:url(../image/min_bg.png) no-repeat;}
 #admin{font-size:14px;color:#545454;height:100%;}
-.ad-menu{float:left;width:235px;background-color:#494642;height:100%;overflow-y:auto;}
+.ad-menu{float:left;width:200px;background-color:#494642;height:100%;overflow-y:auto;}
 .ad-menu .ad-logo{padding:6px 0px 6px 0px;text-align:center;background-color:#63605c;}
 .ad-menu .ad-logo .logo-font{color: #fff;font-size: 19px;margin-top: 23px}
 .ad-menu .ad-list{padding-top:15px;}
@@ -18,7 +18,7 @@ html,body{height:100%;}
 .ad-menu .ad-list .li-item .ic5{background-position:0px -81px;}
 .ad-menu .ad-list .li-item .ic6{background-position:-1px -105px;}
 .ad-menu .ad-list .li-item .ic7{background-position:0px -133px;}
-.ad-menu .ad-list .li-item .arrow{width:13px;height:13px;display:inline-block;cursor:pointer;position:absolute;right:25px;top:50%;margin-top:-6px;background-position:-63px -69px;}
+.ad-menu .ad-list .li-item .arrow{width:13px;height:13px;display:inline-block;cursor:pointer;position:absolute;right:40px;top:50%;margin-top:-6px;background-position:-63px -69px;}
 .ad-menu .ad-list li.over .li-item .arrow{background-position:-63px -91px;}
 .ad-menu .ad-list li.over dl{display:block;}
 .ad-menu .ad-list .dd-item{height:45px;line-height:45px;color:#8a8885;padding-left:70px;display:block;position:relative;}
@@ -26,7 +26,7 @@ html,body{height:100%;}
 .ad-menu .ad-list .dd-item .dd-ar{width:13px;height:22px;background-position:-90px -73px;position:absolute;top:50%;right:-1px;margin-top:-11px;display:none;}
 .ad-menu .ad-list  dd.on .dd-ar{display:block;}
 .ad-menu .ad-list  dd.on .dd-item{color:#FFF;}
-.ad-comment-box{margin-left:235px;background-color:#ededef;height:100%;}
+.ad-comment-box{margin-left:200px;background-color:#ededef;height:100%;}
 .ad-comment-box .ad-top-comment{}
 .ad-top-comment .ad-message{height: 60px;padding:0 30px;background-color:#ccc;}
 .ad-top-comment .ad-message .ad-top-left{float:left;margin-top: 9px;}

@@ -18,6 +18,11 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/swiper.3.1.7.css') }}">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/darkly/bootstrap.min.css">
+
+    {{moment.include_jquery()}}
+    {{moment.include_moment()}}
+    <!--使用中文-->
+    {{moment.lang('zh-CN')}}
 {% endblock %}
 
 {% block scripts %}
@@ -36,7 +41,7 @@
 
             })
             $("#iframe0").load(function () {
-                var mainheight = $(document.body).height() - 63 + 'px'
+                var mainheight = $(document.body).height() - 60 + 'px'
                 $(this).height(mainheight);
             });
     </script>
@@ -45,7 +50,7 @@
 {% block navbar %} <!--导航-->
 <div id="admin">
     <div class="ad-menu" id="ad-menu">
-        <div class="ad-logo" style="height:103px; width:235px">
+        <div class="ad-logo" style="width:200px">
             <div class="logo-font">
                 <div style="margin-bottom: 10px">DevOps</div>
                 <div>运&thinsp;&thinsp;维&thinsp;&thinsp;平&thinsp;&thinsp;台</div>
@@ -69,15 +74,15 @@
                 </li>
 
                 <li>
-                    <div class="li-item"><em class="scm li-ico ic3"></em>应用管理
+                    <div class="li-item"><em class="scm li-ico ic3"></em>资源管理
                         <span class="scm arrow"></span>
                     </div>
                     <dl>
                         <dd>
-                            <a href="{{ url_for('main.get_nodes') }}" target="iframe_a"  class="dd-item">Node管理<span class="scm dd-ar"></span></a>
+                            <a href="{{ url_for('main.get_nodes') }}" target="iframe_a"  class="dd-item">Node 管理<span class="scm dd-ar"></span></a>
                         </dd>
                         <dd>
-                            <a href="{{ url_for('main.get_pods') }}" target="iframe_a"  class="dd-item">Pod管理<span class="scm dd-ar"></span></a>
+                            <a href="{{ url_for('main.get_pods') }}" target="iframe_a"  class="dd-item">Pod 管理<span class="scm dd-ar"></span></a>
                         </dd>
                         <dd>
                             <a href="https://developer.yonyoucloud.com" class="dd-item">消息通讯<span class="scm dd-ar"></span></a>
@@ -115,7 +120,7 @@
         </div>
         <div class="ad-main-comment J_mainContent" id="ad-iframe">
            <!--  <iframe class="J_iframe" name="iframe_a" id="iframe0"  width="100%" src="image/index.jpg" frameborder="0" seamless ></iframe> -->
-         <iframe class="J_iframe" name="iframe_a" id="iframe0"  width="100%" src="main.html" frameborder="0" seamless ></iframe>
+         <iframe class="J_iframe" name="iframe_a" id="iframe0"  width="100%" src="{{ url_for('main.get_main') }}" frameborder="0" seamless ></iframe>
         </div>
     </div>
 </div>

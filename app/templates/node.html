@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="UTF-8">
+        {{moment.include_jquery()}}
+        {{moment.include_moment()}}
+        {{moment.lang('zh-CN')}}
+        <title>Node 管理</title>
+    </head>
+    <body>
+        <h3>Node 管理</h3>
+        <table>
+            <tr>
+                <td>名称</td>
+                <td>状态</td>
+                <td>资源</td>
+                <td>时间</td>
+                <td>操作</td>
+            </tr>
+            {% for node in node_list %}
+                <tr>
+                    <td style="width: 200px">{{ node['node_name'] }}</td>
+                    <td style="width: 200px">
+                        {% if node['node_status'] == 'True' %}
+                            Ready
+                        {% else %}
+                            NotReady
+                        {% endif %}
+                    </td>
+                    <td style="width: 200px">{{ node['node_cpu_capacity'] }} / {{ node['node_memory_capacity'] }}</td>
+
+                    <td style="width: 200px"> {{ moment(node['node_age']).fromNow(refresh=True)  }}</td>
+                    <td style="width: 200px">
+                        <a href="#">修改</a>
+                        <br>
+                        <a href="#">删除</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>

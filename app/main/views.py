@@ -20,12 +20,12 @@ def index():
     return render_template('index.html')
 
 
-@main.route('/get_main')
+@main.route('/main')
 def get_main():
     return render_template('main.html')
 
 
-@main.route('/get_pods', methods=['GET'])
+@main.route('/pods', methods=['GET'])
 def get_pods():
     pod_list = []
     pod_dict = {}
@@ -38,10 +38,17 @@ def get_pods():
         pod_dict['pod_phase'] = item.status.phase
         pod_list.append(pod_dict)
         pod_dict = {}
-    return render_template('pod.html', pod_list=pod_list)
+    return render_template('pods.html', pod_list=pod_list)
 
 
-@main.route('/get_nodes', methods=['GET'])
+@main.route('/node/<node_name>', methods=['GET'])
+def get_node(node_name):
+    kclient = client.CoreV1Api()
+    result = kclient.read_node(node_name)
+    return render_template('node.html', node=result)
+
+
+@main.route('/nodes', methods=['GET'])
 def get_nodes():
     node_list = []
     node_dict = {}
@@ -63,6 +70,6 @@ def get_nodes():
         node_list.append(node_dict)
         node_dict = {}
 
-    return render_template('node.html', node_list=node_list)
+    return render_template('nodes.html', node_list=node_list)
 
 

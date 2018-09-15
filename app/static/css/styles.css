@@ -1,17 +1,5 @@
-div.pod-name {
+div.node_base_span {
     font-weight: bold;
     float: left;
     display: inline-block;
-}
-
-div.pod-namespace {
-    float: left;
-    display: inline-block;
-}
-
-div.pod-phase {
-    display: inline-block;
-    float: left;
-    margin-left: 48px;
-    min-height: 48px;
 }

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="UTF-8">
+        <title>Node</title>
+    </head>
+    <body>
+        <div>
+            <span><a href="{{ url_for('main.get_nodes') }}">节点</a></span>
+            &nbsp;&gt;&nbsp;
+            <span><a href="{{ url_for('main.get_node', node_name=node_name) }}">{{ node_name }}</a></span>
+        </div>
+        <div>
+            <span><a href="{{ url_for('main.get_node_pods', node_name=node_name) }}">状态</a></span>
+            <span><a href="{{ url_for('main.get_node_specifications', node_name=node_name) }}">规格</a></span>
+            <span><a href="{{ url_for('main.get_node_yaml', node_name=node_name) }}">YAML</a></span>
+            <span><a href="{{ url_for('main.get_node_labels', node_name=node_name) }}">标签</a></span>
+            <span><a href="{{ url_for('main.get_node_images', node_name=node_name) }}">镜像</a></span>
+        </div>
+        {% block page_content %}
+            <h1>Hello Node</h1>
+        {% endblock %}
+    </body>
+
+</html>

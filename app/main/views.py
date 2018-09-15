@@ -45,7 +45,7 @@ def get_pods():
 def get_node(node_name):
     kclient = client.CoreV1Api()
     result = kclient.read_node(node_name)
-    return render_template('node.html', node=result)
+    return render_template('node_base.html', node_name=node_name, node=result)
 
 
 @main.route('/nodes', methods=['GET'])
@@ -73,3 +73,26 @@ def get_nodes():
     return render_template('nodes.html', node_list=node_list)
 
 
+@main.route('/node/pods/<node_name>')
+def get_node_pods(node_name):
+    pass
+
+
+@main.route('/node/specifications/<node_name>')
+def get_node_specifications(node_name):
+    pass
+
+
+@main.route('/node/yaml/<node_name>')
+def get_node_yaml(node_name):
+    pass
+
+
+@main.route('/node/labels/<node_name>')
+def get_node_label(node_name):
+    pass
+
+
+@main.route('/node/images/<node_name>')
+def get_node_images(node_name):
+    pass

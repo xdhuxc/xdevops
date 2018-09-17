@@ -10,6 +10,7 @@
             &nbsp;&gt;&nbsp;
             <span><a href="{{ url_for('main.get_node', node_name=node_name) }}">{{ node_name }}</a></span>
         </div>
+        <br>
         <div>
             <span><a href="{{ url_for('main.get_node_pods', node_name=node_name) }}">状态</a></span>
             <span><a href="{{ url_for('main.get_node_specifications', node_name=node_name) }}">规格</a></span>
@@ -17,10 +18,9 @@
             <span><a href="{{ url_for('main.get_node_labels', node_name=node_name) }}">标签</a></span>
             <span><a href="{{ url_for('main.get_node_images', node_name=node_name) }}">镜像</a></span>
         </div>
+        <br>
         {% block page_content %}
-            <h1>Hello Node</h1>
 
-            afsdfseg
         {% endblock %}
     </body>
 

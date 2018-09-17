@@ -83,16 +83,33 @@ def get_node_specifications(node_name):
     pass
 
 
-@main.route('/node/yaml/<node_name>')
+@main.route('/node/yaml/<node_name>', methods=['GET'])
 def get_node_yaml(node_name):
-    pass
+    kclient = client.CoreV1Api()
+    result = kclient.read_node_status(node_name)
+    return render_template('node_yaml.html', node=result, node_name=node_name)
 
 
 @main.route('/node/labels/<node_name>')
-def get_node_label(node_name):
+def get_node_labels(node_name):
     pass
 
 
 @main.route('/node/images/<node_name>')
 def get_node_images(node_name):
-    pass
+    """
+    从Node的yaml文件中解析出所有镜像，以字典的方式组织，不包含带@符号的，镜像大小直接表现为MB，GB等。
+    :param node_name:
+    :return:
+    """
+    images_dict = {}
+    kclient = client.CoreV1Api()
+    result = kclient.read_node_status(node_name)
+    for item in result.status.images:
+        print(item)
+        image_names = item('names')
+        for image_name in image_names:
+            if '@' not in image_name:
+                # 此处需要用工具函数将字节转换为MB，GB等易读形式。
+                images_dict[image_name] = item('size_bytes')
+    return render_template('node_images.html', images=images_dict, node_name=node_name)

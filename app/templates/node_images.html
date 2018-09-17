@@ -1,0 +1,23 @@
+{% extends 'node_base.html' %}
+
+{% block title %}
+    镜像
+{% endblock %}
+
+{% block page_content %}
+<div class="docker-image">
+    <table>
+        <tr>
+            <td>名称</td>
+            <td>大小</td>
+        </tr>
+        {% for image in images.keys() %}
+            <tr>
+                <td>{% image %}</td>
+                <td>{% images(image) %}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+</div>
+{% endblock %}

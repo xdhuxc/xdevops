@@ -47,7 +47,20 @@ def get_pods():
 def get_node(node_name):
     kclient = client.CoreV1Api()
     result = kclient.read_node(node_name)
-    return render_template('node_base.html', node_name=node_name, node=result)
+    node_dict = {}
+    node_dict['node_id'] = result.metadata.uid
+    node_dict['node_name'] = result.metadata.name
+    conditions = result.status.conditions
+    for pressure in conditions:
+        if pressure.type == 'Ready':
+            node_dict['node_status'] = pressure.status
+    node_dict['node_cpu_capacity'] = result.status.capacity['cpu']
+    node_dict['node_memory_capacity'] = result.status.capacity['memory'][:-2]
+    node_dict['node_cpu_allocatable'] = result.status.allocatable['cpu']
+    node_dict['node_memory_allocatable'] = result.status.allocatable['memory'][:-2]
+    node_dict['node_age'] = result.metadata.creation_timestamp
+    print result
+    return render_template('node_base.html', node_name=node_name, node=node_dict)
 
 
 @main.route('/nodes', methods=['GET'])
@@ -82,9 +95,11 @@ def get_node_pods(node_name):
     :param node_name:
     :return:
     """
+    kclient = client.CoreV1Api()
+    result = kclient.list_node()
+    print result
 
-
-    pass
+    return render_template('node_pods.html', node_name=node_name)
 
 
 @main.route('/nodes/<node_name>/specifications')
@@ -98,7 +113,7 @@ def get_node_specifications(node_name):
     kclient = client.CoreV1Api()
     result = kclient.read_node_status(node_name)
     system_info = result.status.node_info
-    node_info['architecture'] = system_info.system_info
+    node_info['architecture'] = system_info.architecture
     node_info['boot_id'] = system_info.boot_id
     node_info['container_runtime_version'] = system_info.container_runtime_version
     node_info['kernel_version'] = system_info.kernel_version
@@ -108,8 +123,17 @@ def get_node_specifications(node_name):
     node_info['operating_system'] = system_info.operating_system
     node_info['os_image'] = system_info.os_image
     node_info['system_uuid'] = system_info.system_uuid
+    node_info['creation_timestamp'] = result.metadata.creation_timestamp
+    node_info['capacity_cpu'] = result.status.capacity['cpu']
+    node_info['capacity_memory'] = result.status.capacity['memory'][:-2]
+    node_info['capacity_pods'] = result.status.capacity['pods']
 
-    return render_template('node_specifications.html', node_name=node_name)
+    addresses = result.status.addresses
+
+    conditions = result.status.conditions
+
+    return render_template('node_specifications.html', node_name=node_name,
+                           node_info=node_info, conditions=conditions, addresses=addresses)
 
 
 @main.route('/nodes/<node_name>/yaml/', methods=['GET'])

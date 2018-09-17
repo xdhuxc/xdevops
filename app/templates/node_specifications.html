@@ -11,6 +11,88 @@
 
 {% block page_content %}
 <div>
-
+    <table>
+        <tr>
+            <td style="width: 20%">CPU：</td>
+            <td style="width: 30%">{{ node_info['capacity_cpu'] }}</td>
+            <td style="width: 20%">创建时间：</td>
+            <td style="width: 30%">{{ node_info['creation_timestamp'] }}</td>
+        </tr>
+        <tr></tr>
+        <tr>
+            <td style="width: 20%">内存：</td>
+            <td style="width: 30%">{{ node_info['capacity_memory'] }}</td>
+            <td style="width: 20%">系统内核：</td>
+            <td style="width: 30%">{{  node_info['kernel_version'] }}</td>
+        </tr>
+        <tr></tr>
+        <tr>
+            <td style="width: 20%">Pod：</td>
+            <td style="width: 30%">{{ node_info['capacity_pods'] }}</td>
+            <br>
+            <td style="width: 20%">Kube Proxy 版本：</td>
+            <td style="width: 30%">{{ node_info['kube_proxy_version'] }}</td>
+        </tr>
+        <tr></tr>
+        <tr>
+            <td style="width: 20%">系统结构：</td>
+            <td style="width: 30%">{{ node_info['architecture'] }}</td>
+            <td style="width: 20%">kubelet 版本：</td>
+            <td style="width: 30%">{{ node_info['kubelet_version'] }}</td>
+        </tr>
+         <tr></tr>
+        <tr>
+            <td style="width: 20%">Boot ID：</td>
+            <td style="width: 30%">{{ node_info['boot_id'] }}</td>
+            <td style="width: 20%">机器 ID：</td>
+            <td style="width: 30%">{{ node_info['machine_id'] }}</td>
+        </tr>
+        <tr></tr>
+        <tr>
+            <td style="width: 20%">容器运行时版本：</td>
+            <td style="width: 30%">{{ node_info['container_runtime_version'] }}</td>
+            <td style="width: 20%">操作系统：</td>
+            <td style="width: 30%">{{ node_info['operating_system'] }}</td>
+        </tr>
+        <tr></tr>
+        <tr>
+            <td style="width: 20%">操作系统镜像：</td>
+            <td style="width: 30%">{{ node_info['os_image'] }}</td>
+            <td style="width: 20%">系统 UUID：</td>
+            <td style="width: 30%">{{ node_info['system_uuid'] }}</td>
+        </tr>
+    </table>
+</div>
+<div>
+    <table>
+        <tr>
+            <td style="width: 20%">条件</td>
+            <td style="width: 20%">状态</td>
+            <td style="width: 30%">原因</td>
+            <td style="width: 30%">信息</td>
+        </tr>
+        {% for condition in conditions %}
+            <tr>
+                <td>{{ condition['type'] }}</td>
+                <td>{{ condition['status'] }}</td>
+                <td>{{ condition['reason'] }}</td>
+                <td>{{ condition['message'] }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+<div style="width: 100%">
+    <table>
+        <tr>
+            <td style="width: 50%">类型</td>
+            <td style="width: 50%">地址</td>
+        </tr>
+        {% for item in addresses %}
+            <tr>
+                <td>{{ item['type'] }}</td>
+                <td>{{ item['address'] }}</td>
+            </tr>
+        {% endfor %}
+    </table>
 </div>
 {% endblock %}

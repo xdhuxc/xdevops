@@ -3,6 +3,9 @@
     <head>
         <meta charset="UTF-8">
         <title>Node</title>
+        {{moment.include_jquery()}}
+        {{moment.include_moment()}}
+        {{moment.lang('zh-CN')}}
     </head>
     <body>
         <div>
@@ -12,7 +15,7 @@
         </div>
         <br>
         <div>
-            <span><a href="{{ url_for('main.get_node_pods', node_name=node_name) }}">状态</a></span>
+            <span><a href="{{ url_for('main.get_node', node_name=node_name) }}">状态</a></span>
             <span><a href="{{ url_for('main.get_node_specifications', node_name=node_name) }}">规格</a></span>
             <span><a href="{{ url_for('main.get_node_yaml', node_name=node_name) }}">YAML</a></span>
             <span><a href="{{ url_for('main.get_node_labels', node_name=node_name) }}">标签</a></span>
@@ -20,7 +23,42 @@
         </div>
         <br>
         {% block page_content %}
-
+            <table>
+            <tr>
+                <td>名称</td>
+                <td>状态</td>
+                <td>资源</td>
+                <td>时间</td>
+                <td>操作</td>
+                <td>终端</td>
+            </tr>
+            <tr>
+                <td style="width: 200px">
+                    <a href="{{ url_for('main.get_node', node_name=node['node_name'])}}">{{ node['node_name'] }}</a>
+                </td>
+                <td style="width: 150px">
+                    {% if node['node_status'] == 'True' %}
+                        已就绪
+                    {% else %}
+                        未就绪
+                    {% endif %}
+                </td>
+                <td style="width: 300px">
+                    <span>资源总量：{{ node['node_cpu_capacity'] }} CPUs / {{ node['node_memory_capacity'] }} KB </span>
+                    <br>
+                    <span>已用资源：{{ node['node_cpu_allocatable'] }} CPUs / {{ node['node_memory_allocatable'] }} KB </span>
+                </td>
+                <td style="width: 200px"> {{ moment(node['node_age']).fromNow(refresh=True)  }}</td>
+                <td style="width: 200px">
+                    <a href="#">修改</a>
+                    <br>
+                    <a href="#">删除</a>
+                </td>
+                <td>
+                    <a href="#">控制台</a>
+                </td>
+            </tr>
+        </table>
         {% endblock %}
     </body>
 

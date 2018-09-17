@@ -94,11 +94,13 @@ def get_node_specifications(node_name):
     :param node_name:
     :return:
     """
+    node_info = {}
     kclient = client.CoreV1Api()
     result = kclient.read_node_status(node_name)
-    print result
+    system_info = result.status.node_info
+    node_info['architecture'] = system_info.system_info
 
-    return render_template('node_specifications.html')
+    return render_template('node_specifications.html', node_name=node_name)
 
 
 @main.route('/nodes/<node_name>/yaml/', methods=['GET'])

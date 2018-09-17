@@ -99,6 +99,15 @@ def get_node_specifications(node_name):
     result = kclient.read_node_status(node_name)
     system_info = result.status.node_info
     node_info['architecture'] = system_info.system_info
+    node_info['boot_id'] = system_info.boot_id
+    node_info['container_runtime_version'] = system_info.container_runtime_version
+    node_info['kernel_version'] = system_info.kernel_version
+    node_info['kube_proxy_version'] = system_info.kube_proxy_version
+    node_info['kubelet_version'] = system_info.kubelet_version
+    node_info['machine_id'] = system_info.machine_id
+    node_info['operating_system'] = system_info.operating_system
+    node_info['os_image'] = system_info.os_image
+    node_info['system_uuid'] = system_info.system_uuid
 
     return render_template('node_specifications.html', node_name=node_name)
 

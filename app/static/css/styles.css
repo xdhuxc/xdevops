@@ -3,3 +3,13 @@ div.node_base_span {
     float: left;
     display: inline-block;
 }
+
+td.image-limit-line {
+    width: 200px;
+    height: 20px;
+    overflow: hidden;
+    display: block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}

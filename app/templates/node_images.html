@@ -4,20 +4,24 @@
     镜像
 {% endblock %}
 
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+{% endblock %}
+
 {% block page_content %}
-<div class="docker-image">
-    <table>
+<div>
+    <table style="border:2px solid red;">
         <tr>
-            <td>名称</td>
+            <td style="border:2px solid red; height: 20px; width: 300px;">名称</td>
             <td>大小</td>
         </tr>
         {% for image in images.keys() %}
             <tr>
-                <td>{% image %}</td>
-                <td>{% images(image) %}</td>
+                <td class="image-limit-line" style="border:2px solid green; width: 80%; overflow: hidden; display: block; text-overflow: ellipsis; white-space: nowrap; cursor: pointer;">{{ image }} </td>
+                <td style="text-align: right; border:2px solid red; width: 30%; margin-left: 0px">{{ images[image] }}</td>
             </tr>
         {% endfor %}
     </table>
-
 </div>
 {% endblock %}

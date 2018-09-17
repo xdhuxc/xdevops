@@ -9,6 +9,8 @@ from flask import render_template
 from . import main
 from kubernetes import client
 
+from ..utils import Utils
+
 CHARSET = os.environ.get('CHARSET') or 'utf-8'
 reload(sys)
 sys.setdefaultencoding(CHARSET)
@@ -41,7 +43,7 @@ def get_pods():
     return render_template('pods.html', pod_list=pod_list)
 
 
-@main.route('/node/<node_name>', methods=['GET'])
+@main.route('/nodes/<node_name>', methods=['GET'])
 def get_node(node_name):
     kclient = client.CoreV1Api()
     result = kclient.read_node(node_name)
@@ -73,43 +75,70 @@ def get_nodes():
     return render_template('nodes.html', node_list=node_list)
 
 
-@main.route('/node/pods/<node_name>')
+@main.route('/nodes/<node_name>/pods/')
 def get_node_pods(node_name):
+    """
+    获取指定 node 中的 pod 信息
+    :param node_name:
+    :return:
+    """
+
+
     pass
 
 
-@main.route('/node/specifications/<node_name>')
+@main.route('/nodes/<node_name>/specifications')
 def get_node_specifications(node_name):
-    pass
+    """
+    获取指定 node 的信息
+    :param node_name:
+    :return:
+    """
+    kclient = client.CoreV1Api()
+    result = kclient.read_node_status(node_name)
+    print result
+
+    return render_template('node_specifications.html')
 
 
-@main.route('/node/yaml/<node_name>', methods=['GET'])
+@main.route('/nodes/<node_name>/yaml/', methods=['GET'])
 def get_node_yaml(node_name):
+    """
+    获取指定 node 的 YAML文件。
+    :param node_name:
+    :return:
+    """
     kclient = client.CoreV1Api()
     result = kclient.read_node_status(node_name)
     return render_template('node_yaml.html', node=result, node_name=node_name)
 
 
-@main.route('/node/labels/<node_name>')
+@main.route('/nodes/<node_name>/labels/')
 def get_node_labels(node_name):
-    pass
+    """
+    获取指定 node 的标签和注解。
+    :param node_name:
+    :return:
+    """
+    kclient = client.CoreV1Api()
+    result = kclient.read_node_status(node_name)
+    labels_dict = result.metadata.labels
+    annotations = result.metadata.annotations
+    return render_template('node_labels.html', labels=labels_dict, annotations=annotations, node_name=node_name)
 
 
-@main.route('/node/images/<node_name>')
+@main.route('/nodes/<node_name>/images/')
 def get_node_images(node_name):
     """
-    从Node的yaml文件中解析出所有镜像，以字典的方式组织，不包含带@符号的，镜像大小直接表现为MB，GB等。
+    从Node的yaml文件中解析出所有镜像，以字典的方式组织，镜像大小直接表现为MB，GB等。
     :param node_name:
     :return:
     """
     images_dict = {}
     kclient = client.CoreV1Api()
     result = kclient.read_node_status(node_name)
-    for item in result.status.images:
-        print(item)
-        image_names = item('names')
-        for image_name in image_names:
-            if '@' not in image_name:
-                # 此处需要用工具函数将字节转换为MB，GB等易读形式。
-                images_dict[image_name] = item('size_bytes')
+    for image in result.status.images:
+        for image_name in image.names:
+            # 此处用工具函数将字节转换为MB，GB等易读形式。
+            images_dict[image_name] = Utils.readable(image.size_bytes)
     return render_template('node_images.html', images=images_dict, node_name=node_name)

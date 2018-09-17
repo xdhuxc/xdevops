@@ -1,0 +1,36 @@
+{% extends 'node_base.html' %}
+
+{% block title %}
+    标签
+{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+{% endblock %}
+
+{% block page_content %}
+<div>
+    <div>标签：</div>
+    <div class="node-labels">
+        {% for key in labels.keys() %}
+
+            <div>
+                {{ key }} = {{ labels[key] }}
+            </div>
+            <br>
+        {% endfor %}
+    </div>
+    <br>
+    <div>注解：</div>
+    <div class="node-annotations">
+        {% for key in annotations %}
+
+            <div>
+                {{ key }} = {{ annotations[key] }}
+            </div>
+             <br>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

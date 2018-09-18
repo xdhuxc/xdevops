@@ -1,0 +1,28 @@
+{% extends 'pod_base.html' %}
+
+{% block title %}
+    日志
+{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+{% endblock %}
+
+{% block page_content %}
+    <div>
+        {% for container in containers  %}
+            <span>
+                <a href="{% if container and tail_lines %}
+                             {{ url_for('main.get_pod_logs', namespace=pod_namespace, name=pod_name, container=container, tail_lines=tail_lines) }}
+                         {% else %}
+                             {{ url_for('main.get_pod_logs', namespace=pod_namespace, name=pod_name) }}
+                         {% endif %}">{{ container }}</a>
+            </span>
+        {% endfor %}
+    </div>
+
+    <div>
+        {{ logs }}
+    </div>
+{% endblock %}

@@ -14,7 +14,7 @@ sys.setdefaultencoding('utf-8')
 config.load_kube_config()
 
 kclient = client.CoreV1Api()
-result = kclient.list_node(watch=False)
-type(result)
-for item in result.items:
-    print(item)
+
+
+result = kclient.read_namespaced_pod_status('kube-dns-v8-9wxkw', 'kube-system')
+print result

@@ -5,11 +5,13 @@ import os
 import sys
 
 from flask import render_template
+from flask import request
 
 from . import main
 from kubernetes import client
 
 from ..utils import Utils
+from .. import kclient
 
 CHARSET = os.environ.get('CHARSET') or 'utf-8'
 reload(sys)
@@ -169,8 +171,6 @@ def get_pods():
 
     result = kclient.list_pod_for_all_namespaces(watch=False)
     for item in result.items:
-        print item
-        print type(item)
         pod_dict['pod_name'] = item.metadata.name
         pod_dict['pod_namespace'] = item.metadata.namespace
         pod_dict['pod_phase'] = item.status.phase
@@ -182,29 +182,92 @@ def get_pods():
 
 @main.route('/pod/<pod_namespace>/<pod_name>', methods=['GET'])
 def get_pod(pod_namespace, pod_name):
-    kclient = client.CoreV1Api()
+    """
+    获取 Pod 基本信息。
+    :param pod_namespace:
+    :param pod_name:
+    :return:
+    """
     result = kclient.read_namespaced_pod(pod_name, pod_namespace)
-    print result
-    print type(result)
-
-    return render_template('pod_base.html', pod_namespace=pod_namespace, pod_name=pod_name)
+    pod_dict = {}
+    pod_dict['pod_name'] = result.metadata.name
+    pod_dict['pod_namespace'] = result.metadata.namespace
+    pod_dict['pod_phase'] = result.status.phase
+    pod_dict['pod_creation_timestamp'] = result.metadata.creation_timestamp
+    conditions = result.status.conditions
+    for condition in conditions:
+        if condition.type == 'Ready':
+            pod_dict['pod_status'] = bool(condition.status)
+    return render_template('pod_base.html', pod=pod_dict, pod_namespace=pod_namespace, pod_name=pod_name)
 
 
 @main.route('/pod/<pod_namespace>/<pod_name>/specifications', methods=['GET'])
 def get_pod_specifications(pod_namespace, pod_name):
-    return render_template('pod_base.html', pod_namespace=pod_namespace, pod_name=pod_name)
+    pod = kclient.read_namespaced_pod_status(pod_name, pod_namespace)
+    pod_info = {}
+    pod_info['start_time'] = pod.status.start_time
+    pod_info['creation_timestamp'] = pod.metadata.creation_timestamp
+    pod_info['phase'] = pod.status.phase
+    pod_info['namespace'] = pod.metadata.namespace
+    pod_info['dns_policy'] = pod.spec.dns_policy
+    pod_info['pod_ip'] = pod.status.pod_ip
+    pod_info['restart_policy'] = pod.spec.restart_policy
+    pod_info['node'] = pod.spec.node_name
+    pod_info['service_account'] = pod.spec.service_account
+    pod_info['service_account_name'] = pod.spec.service_account_name
+    pod_info['host_ip'] = pod.status.host_ip
+    pod_info['qos_class'] = pod.status.qos_class
+    pod_info['termination_grace_period_seconds'] = pod.spec.termination_grace_period_seconds
+    images = []
+    for item in pod.spec.containers:
+        images.append(item.image)
+    pod_info['images'] = images
+
+    conditions = pod.status.conditions
+
+    return render_template('pod_specifications.html', pod_namespace=pod_namespace, pod_name=pod_name, pod_info=pod_info, conditions=conditions)
 
 
 @main.route('/pod/<pod_namespace>/<pod_name>/yaml', methods=['GET'])
 def get_pod_yaml(pod_namespace, pod_name):
-    return render_template('pod_base.html', pod_namespace=pod_namespace, pod_name=pod_name)
+    pod = kclient.read_namespaced_pod(pod_name, pod_namespace)
+    return render_template('pod_yaml.html',  pod_namespace=pod_namespace, pod_name=pod_name, pod=pod)
 
 
 @main.route('/pod/<pod_namespace>/<pod_name>/labels', methods=['GET'])
 def get_pod_labels(pod_namespace, pod_name):
-    return render_template('pod_base.html', pod_namespace=pod_namespace, pod_name=pod_name)
+    """
+    获取指定命名空间下的 Pod 的标签和注解。
+    :param pod_namespace:
+    :param pod_name:
+    :return:
+    """
+    pod = kclient.read_namespaced_pod(pod_name, pod_namespace)
+    labels = pod.metadata.labels
+    annotations = pod.metadata.annotations
+    return render_template('pod_labels.html', pod_namespace=pod_namespace, pod_name=pod_name, labels=labels, annotations=annotations)
 
 
-@main.route('/pod/<pod_namespace>/<pod_name>/logs', methods=['GET'])
-def get_pod_logs(pod_namespace, pod_name):
-    return render_template('pod_base.html', pod_namespace=pod_namespace, pod_name=pod_name)
+@main.route('/pod/<namespace>/<name>/logs', methods=['GET'])
+def get_pod_logs(namespace, name, **kwargs):
+    containers = Utils.get_pod_containers(namespace, name)
+
+    print request.args
+    if 'container' in request.args:
+        container = request.args['container']
+    else:
+        # 默认显示第一个容器的日志。
+        container = containers[0]
+
+    if 'tail_lines' in request.args:
+        tail_lines = request.args['tail_lines']
+    else:
+        # 默认显示50行日志信息。
+        tail_lines = 50
+    # 获取 pod 内容器的日志信息
+    print container
+    pod_log = kclient.read_namespaced_pod_log(name, namespace, container=container, tail_lines=tail_lines)
+    print pod_log
+
+    return render_template('pod_logs.html', pod_namespace=namespace, pod_name=name,
+                           containers=containers, container=container, tail_lines=tail_lines, logs=pod_log)

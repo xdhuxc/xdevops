@@ -4,6 +4,7 @@
 # date: 2018-09-09
 # description: 工具方法
 
+from . import kclient
 
 class Utils(object):
 
@@ -28,3 +29,17 @@ class Utils(object):
             return format((file_size / t), '.2f') + 'TB'
         else:
             return format((file_size / p), '.2f') + 'PB'
+
+    @staticmethod
+    def get_pod_containers(namespace, name):
+        """
+        获取指定命名空间中的 pod 中的所有容器。
+        :param namespace:
+        :param name:
+        :return:
+        """
+        containers = []
+        pod = kclient.read_namespaced_pod(name, namespace)
+        for container in pod.spec.containers:
+            containers.append(container.name)
+        return containers

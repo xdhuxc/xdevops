@@ -1,0 +1,100 @@
+{% extends 'pod_base.html' %}
+
+{% block title %}
+    规格
+{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+{% endblock %}
+
+{% block page_content %}
+<div>
+    <table>
+        <tr>
+            <td style="width: 20%">开始时间：</td>
+            <td style="width: 30%">{{ moment(pod_info['start_time']).format('YYYY-MM-DD hh:mm:ss') }}</td>
+            <td style="width: 20%">创建时间：</td>
+            <td style="width: 30%">{{ moment(pod_info['creation_timestamp']).format('YYYY-MM-DD hh:mm:ss')  }}</td>
+        </tr>
+        <tr></tr>
+        <tr>
+            <td style="width: 20%">状态：</td>
+            <td style="width: 30%">{{ pod_info['phase'] }}</td>
+            <td style="width: 20%">命名空间：</td>
+            <td style="width: 30%">{{  pod_info['namespace'] }}</td>
+        </tr>
+        <tr></tr>
+        <tr>
+            <td style="width: 20%">DNS 策略：</td>
+            <td style="width: 30%">{{  pod_info['dns_policy'] }}</td>
+            <br>
+            <td style="width: 20%">Pod IP：</td>
+            <td style="width: 30%">{{ pod_info['pod_ip'] }}</td>
+        </tr>
+        <tr></tr>
+        <tr>
+            <td style="width: 20%">重启策略：</td>
+            <td style="width: 30%">{{ pod_info['restart_policy'] }}</td>
+            <td style="width: 20%">节点：</td>
+            <td style="width: 30%">{{ pod_info['node'] }}</td>
+        </tr>
+         <tr></tr>
+        <tr>
+            <td style="width: 20%">服务账户：</td>
+            <td style="width: 30%">{{ pod_info['service_account'] }}</td>
+            <td style="width: 20%">主机 IP：</td>
+            <td style="width: 30%">{{ pod_info['host_ip']  }}</td>
+        </tr>
+        <tr></tr>
+        <tr>
+            <td style="width: 20%">服务账户名称：</td>
+            <td style="width: 30%">{{ pod_info['service_account_name'] }}</td>
+            <td style="width: 20%">终止宽限时间：</td>
+            <td style="width: 30%">{{ pod_info['termination_grace_period_seconds'] }} s</td>
+        </tr>
+        <tr></tr>
+        <tr>
+            <td style="width: 20%">Qos等级：</td>
+            <td style="width: 30%">{{ pod_info['qos_class'] }}</td>
+        </tr>
+
+        <tr>
+            <td>镜像：</td>
+            <td>{{ pod_info['images'][0] }}</td>
+        </tr>
+        {% for image in pod_info['images'] %}
+            <tr>
+                <td>
+
+                </td>
+                <td>
+                    {% if image != pod_info['images'][0] %}
+                        {{ image }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+
+    </table>
+</div>
+<div>
+    <table>
+        <tr>
+            <td style="width: 30%">条件</td>
+            <td style="width: 20%">状态</td>
+            <td style="width: 30%">原因</td>
+            <td style="width: 30%">信息</td>
+        </tr>
+        {% for condition in conditions %}
+            <tr>
+                <td>{{ condition['type'] }}</td>
+                <td>{{ condition['status'] }}</td>
+                <td>{{ condition['reason'] }}</td>
+                <td>{{ condition['message'] }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

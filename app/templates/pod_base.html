@@ -19,32 +19,37 @@
             <span><a href="{{ url_for('main.get_pod_specifications', pod_namespace=pod_namespace, pod_name=pod_name) }}">规格</a></span>
             <span><a href="{{ url_for('main.get_pod_yaml', pod_namespace=pod_namespace, pod_name=pod_name) }}">YAML</a></span>
             <span><a href="{{ url_for('main.get_pod_labels', pod_namespace=pod_namespace, pod_name=pod_name) }}">标签</a></span>
-            <span><a href="{{ url_for('main.get_pod_logs', pod_namespace=pod_namespace, pod_name=pod_name) }}">日志</a></span>
+            <span><a href=" {% if container and tail_lines %}
+                                {{ url_for('main.get_pod_logs', namespace=pod_namespace, name=pod_name, container=container, tail_lines=tail_lines) }}
+                            {% else %}
+                                {{ url_for('main.get_pod_logs', namespace=pod_namespace, name=pod_name) }}
+                            {% endif %}">
+                     日志</a></span>
         </div>
         <br>
         {% block page_content %}
             <table>
                 <tr>
                     <td>名称</td>
+                    <td>命名空间</td>
                     <td>状态</td>
-                    <td>资源</td>
-                    <td>时间</td>
+                    <td>创建时间</td>
                     <td>操作</td>
                     <td>终端</td>
                 </tr>
                 <tr>
                     <td style="width: 300px">
-                        <a href="{{ url_for('main.get_pod', pod_namespace=pod_namespace, pod_name=pod_name)}}">{{ pod_name }}</a>
+                        <a href="{{ url_for('main.get_pod', pod_namespace=pod_namespace, pod_name=pod_name)}}">{{ pod['pod_name'] }}</a>
                     </td>
+                    <td>{{ pod['pod_namespace'] }}</td>
                     <td style="width: 150px">
+                        {% if pod['pod_status'] == True %}
                             已就绪
+                        {% else %}
+                            未就绪
+                        {% endif %}
                     </td>
-                    <td style="width: 300px">
-                        <span>资源总量： KB </span>
-                        <br>
-                        <span>已用资源： KB </span>
-                    </td>
-                    <td style="width: 200px"></td>
+                    <td style="width: 200px">{{ moment(pod['pod_creation_timestamp']).format('YYYY-MM-DD hh:mm:ss') }}</td>
                     <td style="width: 200px">
                         <a href="#">修改</a>
                         <br>

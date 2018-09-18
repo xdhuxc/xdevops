@@ -7,11 +7,17 @@ from flask_moment import Moment
 from flask import Flask
 from config import config
 from kubernetes import config as kubernetes_config
+from kubernetes import client as kubernetes_client
 
 
 bootstrap = Bootstrap()
 db = SQLAlchemy()
 moment = Moment()
+
+# 加载 kubernetes 配置文件
+kubernetes_config.load_kube_config()
+# 创建 kubernetes 客户端对象
+kclient = kubernetes_client.CoreV1Api()
 
 
 def create_app(config_name):
@@ -22,9 +28,6 @@ def create_app(config_name):
     bootstrap.init_app(app)
     db.init_app(app)
     moment.init_app(app)
-
-    # 加载 kubernetes 配置文件
-    kubernetes_config.load_kube_config()
 
     from .main import main as main_blueprint
 

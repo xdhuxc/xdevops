@@ -2,21 +2,37 @@
 <html lang="cn">
     <head>
         <meta charset="UTF-8">
-        <title>Pod管理</title>
+        <title>Pod 管理</title>
+        {{moment.include_jquery()}}
+        {{moment.include_moment()}}
+        {{moment.lang('zh-CN')}}
     </head>
     <body>
-        <h3>pod管理</h3>
+        <h3>pod 管理</h3>
         <table>
             <tr>
                 <td>名称</td>
                 <td>命名空间</td>
                 <td>状态</td>
+                <td>时间</td>
+                <td>操作</td>
             </tr>
             {% for item in pod_list %}
                 <tr>
-                    <td style="width: 400px">{{ item['pod_name'] }}</td>
-                    <td style="width: 200px">{{ item['pod_namespace'] }}</td>
-                    <td style="width: 200px">{{ item['pod_phase'] }}</td>
+                    <td style="width: 40%">
+                        <a href="{{ url_for('main.get_pod', pod_namespace=item['pod_namespace'], pod_name=item['pod_name']) }}">{{ item['pod_name'] }}</a>
+                    </td>
+                    <td style="width: 10%">{{ item['pod_namespace'] }}</td>
+                    <td style="width: 10%">{{ item['pod_phase'] }}</td>
+                    <td style="width: 10%">{{ moment(item['start_time']).fromNow(refresh=True) }}</td>
+                    <td style="width: 10%">
+                        <a href="#">编辑</a>
+                        <br>
+                        <a href="#">删除</a>
+                    </td>
+                    <td style="width: 10%">
+                        <a href="#">控制台</a>
+                    </td>
                 </tr>
             {% endfor %}
         </table>

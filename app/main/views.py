@@ -27,22 +27,6 @@ def get_main():
     return render_template('main.html')
 
 
-@main.route('/pods', methods=['GET'])
-def get_pods():
-    pod_list = []
-    pod_dict = {}
-    kclient = client.CoreV1Api()
-
-    result = kclient.list_pod_for_all_namespaces(watch=False)
-    for item in result.items:
-        pod_dict['pod_name'] = item.metadata.name
-        pod_dict['pod_namespace'] = item.metadata.namespace
-        pod_dict['pod_phase'] = item.status.phase
-        pod_list.append(pod_dict)
-        pod_dict = {}
-    return render_template('pods.html', pod_list=pod_list)
-
-
 @main.route('/nodes/<node_name>', methods=['GET'])
 def get_node(node_name):
     kclient = client.CoreV1Api()
@@ -59,7 +43,7 @@ def get_node(node_name):
     node_dict['node_cpu_allocatable'] = result.status.allocatable['cpu']
     node_dict['node_memory_allocatable'] = result.status.allocatable['memory'][:-2]
     node_dict['node_age'] = result.metadata.creation_timestamp
-    print result
+
     return render_template('node_base.html', node_name=node_name, node=node_dict)
 
 
@@ -97,8 +81,6 @@ def get_node_pods(node_name):
     """
     kclient = client.CoreV1Api()
     result = kclient.list_node()
-    print result
-
     return render_template('node_pods.html', node_name=node_name)
 
 
@@ -177,3 +159,52 @@ def get_node_images(node_name):
             # 此处用工具函数将字节转换为MB，GB等易读形式。
             images_dict[image_name] = Utils.readable(image.size_bytes)
     return render_template('node_images.html', images=images_dict, node_name=node_name)
+
+
+@main.route('/pods', methods=['GET'])
+def get_pods():
+    pod_list = []
+    pod_dict = {}
+    kclient = client.CoreV1Api()
+
+    result = kclient.list_pod_for_all_namespaces(watch=False)
+    for item in result.items:
+        print item
+        print type(item)
+        pod_dict['pod_name'] = item.metadata.name
+        pod_dict['pod_namespace'] = item.metadata.namespace
+        pod_dict['pod_phase'] = item.status.phase
+        pod_dict['start_time'] = item.status.start_time
+        pod_list.append(pod_dict)
+        pod_dict = {}
+    return render_template('pods.html', pod_list=pod_list)
+
+
+@main.route('/pod/<pod_namespace>/<pod_name>', methods=['GET'])
+def get_pod(pod_namespace, pod_name):
+    kclient = client.CoreV1Api()
+    result = kclient.read_namespaced_pod(pod_name, pod_namespace)
+    print result
+    print type(result)
+
+    return render_template('pod_base.html', pod_namespace=pod_namespace, pod_name=pod_name)
+
+
+@main.route('/pod/<pod_namespace>/<pod_name>/specifications', methods=['GET'])
+def get_pod_specifications(pod_namespace, pod_name):
+    return render_template('pod_base.html', pod_namespace=pod_namespace, pod_name=pod_name)
+
+
+@main.route('/pod/<pod_namespace>/<pod_name>/yaml', methods=['GET'])
+def get_pod_yaml(pod_namespace, pod_name):
+    return render_template('pod_base.html', pod_namespace=pod_namespace, pod_name=pod_name)
+
+
+@main.route('/pod/<pod_namespace>/<pod_name>/labels', methods=['GET'])
+def get_pod_labels(pod_namespace, pod_name):
+    return render_template('pod_base.html', pod_namespace=pod_namespace, pod_name=pod_name)
+
+
+@main.route('/pod/<pod_namespace>/<pod_name>/logs', methods=['GET'])
+def get_pod_logs(pod_namespace, pod_name):
+    return render_template('pod_base.html', pod_namespace=pod_namespace, pod_name=pod_name)

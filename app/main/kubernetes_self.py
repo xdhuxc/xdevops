@@ -15,6 +15,11 @@ class Kubernetes(object):
     @staticmethod
     @cert_required()
     def get_all_pods(rs):
+        """
+
+        :param rs:
+        :return:
+        """
         url = current_app.config['KUBERNETES_URL'] + '/api/v1/pods?watch=False'
         try:
             resp = rs.get(url, timeout=current_app.config['HTTP_TIMEOUT'])
@@ -24,3 +29,21 @@ class Kubernetes(object):
                 return resp.content
         except Exception, e:
             print(Exception, e)
+
+    @staticmethod
+    @cert_required()
+    def get_command_result(rs, namespace, name):
+        """
+        /api/v1/namespaces/{namespace}/pods/{name}/exec
+        :return:
+        """
+        url = current_app.config['KUBERNETES_URL'] + '/api/v1/namespaces/%s/pods/%s/exec' % (namespace, name)
+        try:
+            resp = rs.get(url, timeout=current_app.config['HTTP_TIMEOUT'])
+            if resp.status_code == 200:
+                return resp.json()
+            else:
+                return resp.content
+        except Exception, e:
+            print(Exception, e)
+

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="cn">
+    <head>
+        <meta charset="UTF-8">
+        <title>命名空间</title>
+        {{moment.include_jquery()}}
+        {{moment.include_moment()}}
+        <!--使用中文-->
+        {{moment.lang('zh-CN')}}
+    </head>
+    <body>
+        <div style="width: 100%">
+            <table style="width: 100%">
+                <tr>
+                    <td style="width: 30%">命名空间</td>
+                    <td style="width: 30%">创建日期</td>
+                    <td style="width: 40%">状态</td>
+                </tr>
+                {% for namespace in namespaces %}
+                    <tr>
+                        <td>{{ namespace['name'] }}</td>
+                        <td>{{ moment(namespace['creation_timestamp']).format('YYYY-MM-DD hh:mm:ss') }}</td>
+                        <td>{{ namespace['phase'] }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </body>
+</html>

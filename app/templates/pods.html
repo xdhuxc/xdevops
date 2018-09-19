@@ -31,7 +31,7 @@
                         <a href="#">删除</a>
                     </td>
                     <td style="width: 10%">
-                        <a href="#">控制台</a>
+                        <a href="{{ url_for('main.get_command_result', namespace=item['pod_namespace'], name=item['pod_name']) }}">终端</a>
                     </td>
                 </tr>
             {% endfor %}

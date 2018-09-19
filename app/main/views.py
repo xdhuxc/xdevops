@@ -271,3 +271,30 @@ def get_pod_logs(namespace, name, **kwargs):
 
     return render_template('pod_logs.html', pod_namespace=namespace, pod_name=name,
                            containers=containers, container=container, tail_lines=tail_lines, logs=pod_log)
+
+
+@main.route('/namespaces', methods=['GET'])
+def get_namespaces():
+    namespace_list = []
+    namespace = {}
+    namespaces = kclient.list_namespace()
+    for item in namespaces.items:
+        namespace['name'] = item.metadata.name
+        namespace['creation_timestamp'] = item.metadata.creation_timestamp
+        namespace['phase'] = item.status.phase
+        namespace_list.append(namespace)
+        namespace = {}
+    return render_template('namespaces.html', namespaces=namespace_list)
+
+
+@main.route('/pod/<namespace>/<name>/command', methods=['GET'])
+def get_command_result(namespace, name):
+
+    command_result = kclient.connect_get_namespaced_pod_exec(name, namespace, command='pwd', stderr=True, stdin=True, stdout=True, tty=True)
+
+    stderr = True
+    stdin = True
+    stdout = True
+    tty = True
+
+    return render_template('command.html', result=command_result)

@@ -289,12 +289,15 @@ def get_namespaces():
 
 @main.route('/pod/<namespace>/<name>/command', methods=['GET'])
 def get_command_result(namespace, name):
+    containers = Utils.get_pod_containers(namespace, name)
 
-    command_result = kclient.connect_get_namespaced_pod_exec(name, namespace, command='pwd', stderr=True, stdin=True, stdout=True, tty=True)
+    print request.args
+    if 'container' in request.args:
+        container = request.args['container']
+    else:
+        # 默认显示第一个容器的日志。
+        container = containers[0]
 
-    stderr = True
-    stdin = True
-    stdout = True
-    tty = True
+    command_result = kclient.connect_get_namespaced_pod_exec(name, namespace, container=container, command='pwd')
 
     return render_template('command.html', result=command_result)

@@ -6,8 +6,11 @@ import sys
 
 from flask import render_template
 from flask import request
+from flask import redirect
+from flask import current_app
 
 from . import main
+from .. import config
 from kubernetes import client
 
 from ..utils import Utils
@@ -49,12 +52,20 @@ def get_node(node_name):
     return render_template('node_base.html', node_name=node_name, node=node_dict)
 
 
+@main.route('/node/terminal/<node_ip>', methods=['GET'])
+def get_node_terminal(node_ip):
+    node_terminal_url = current_app.config['GOTTY_HTTP_PROTOCOL'] + '://' + node_ip + ':' \
+                        + str(current_app.config['GOTTY_HOST_PORT']) + '/?'
+    return redirect(node_terminal_url)
+
+
 @main.route('/nodes', methods=['GET'])
 def get_nodes():
     node_list = []
     node_dict = {}
     kclient = client.CoreV1Api()
     result = kclient.list_node()
+    print result
     for item in result.items:
         node_dict['node_id'] = item.metadata.uid
         node_dict['node_name'] = item.metadata.name
@@ -67,7 +78,10 @@ def get_nodes():
         node_dict['node_cpu_allocatable'] = item.status.allocatable['cpu']
         node_dict['node_memory_allocatable'] = item.status.allocatable['memory'][:-2]
         node_dict['node_age'] = item.metadata.creation_timestamp
-
+        # get the current node's ip
+        for address in item.status.addresses:
+            if address.type == 'InternalIP':
+                node_dict['node_ip'] = address.address
         node_list.append(node_dict)
         node_dict = {}
 
@@ -275,6 +289,10 @@ def get_pod_logs(namespace, name, **kwargs):
 
 @main.route('/namespaces', methods=['GET'])
 def get_namespaces():
+    """
+    获取所有的命名空间
+    :return:
+    """
     namespace_list = []
     namespace = {}
     namespaces = kclient.list_namespace()
@@ -287,17 +305,15 @@ def get_namespaces():
     return render_template('namespaces.html', namespaces=namespace_list)
 
 
-@main.route('/pod/<namespace>/<name>/command', methods=['GET'])
-def get_command_result(namespace, name):
-    containers = Utils.get_pod_containers(namespace, name)
-
-    print request.args
-    if 'container' in request.args:
-        container = request.args['container']
-    else:
-        # 默认显示第一个容器的日志。
-        container = containers[0]
-
-    command_result = kclient.connect_get_namespaced_pod_exec(name, namespace, container=container, command='pwd')
-
-    return render_template('command.html', result=command_result)
+@main.route('/pod/<namespace>/<name>/terminal', methods=['GET'])
+def get_pod_terminal(namespace, name):
+    """
+    使用 gotty 做 pod 控制台
+    :param namespace:
+    :param name:
+    :return:
+    """
+    pod_terminal_url_prefix = current_app.config['GOTTY_HTTP_PROTOCOL'] + '://' + \
+        current_app.config['KUBERNETES_MASTER'] + ':' + str(current_app.config['GOTTY_POD_PORT'])
+    pod_terminal_url = pod_terminal_url_prefix + '/?arg=%s&arg=-n&arg=%s&arg=sh' % (name, namespace)
+    return redirect(pod_terminal_url)

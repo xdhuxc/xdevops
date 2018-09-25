@@ -11,8 +11,12 @@ class Config:
 
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'xdhuxc'
     SQLALCHEMY_TRACK_MODIFICATIONS = True
-    KUBERNETES_URL = os.environ.get('KUBERNETES_URL') or 'https://172.20.26.150:6443'
-    HTTP_TIMEOUT = 10
+    KUBERNETES_HTTPS_URL = os.environ.get('KUBERNETES_HTTPS_URL') or 'https://172.20.26.150:6443'
+    KUBERNETES_MASTER = os.environ.get('KUBERNETES_MASTER') or '172.20.26.150'
+    HTTP_TIMEOUT = os.environ.get('HTTP_TIMEOUT') or 10
+    GOTTY_POD_PORT = os.environ.get('GOTTY_POD_PORT') or 9988
+    GOTTY_HOST_PORT = os.environ.get('GOTTY_HOST_PORT') or 8899
+    GOTTY_HTTP_PROTOCOL = os.environ.get('GOTTY_HTTP_PROTOCOL') or 'http'
 
     def __init__(self):
         pass

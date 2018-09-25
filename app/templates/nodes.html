@@ -42,7 +42,7 @@
                         <a href="#">删除</a>
                     </td>
                     <td>
-                        <a href="#">控制台</a>
+                        <a href="{{ url_for('main.get_node_terminal', node_ip=node['node_ip']) }}">控制台</a>
                     </td>
                 </tr>
             {% endfor %}

@@ -5,6 +5,11 @@
 # description: 工具方法
 
 from . import kclient
+from kubernetes.client.models.v1_namespace import V1Namespace
+from kubernetes.client.models.v1_object_meta import V1ObjectMeta
+from kubernetes.client.models.v1_namespace_spec import V1NamespaceSpec
+from kubernetes.client.models.v1_namespace_status import V1NamespaceStatus
+
 
 class Utils(object):
 
@@ -43,3 +48,17 @@ class Utils(object):
         for container in pod.spec.containers:
             containers.append(container.name)
         return containers
+
+    @staticmethod
+    def create_namespace(api_version, kind, namespace):
+        """
+        创建命令空间
+        :param name:
+        :return:
+        """
+        namespace = V1Namespace()
+        namespace.api_version = api_version
+        namespace.kind = kind or 'Namespace'
+        metadata = V1ObjectMeta()
+        body = ''
+        kclient.create_namespace(body)

@@ -8,11 +8,23 @@ import os
 import yaml
 
 from . import kclient
+
 from kubernetes.client.models.v1_namespace import V1Namespace
 from kubernetes.client.models.v1_object_meta import V1ObjectMeta
 from kubernetes.client.models.v1_namespace_spec import V1NamespaceSpec
 from kubernetes.client.models.v1_namespace_status import V1NamespaceStatus
 from kubernetes.client.apis.apiextensions_v1beta1_api import ApiextensionsV1beta1Api
+
+
+from kubernetes.client.models.v1_service import V1Service
+from kubernetes.client.models.v1_service_account import V1ServiceAccount
+from kubernetes.client.models.v1_service_account_list import V1ServiceAccountList
+from kubernetes.client.models.v1_service_account_token_projection import V1ServiceAccountTokenProjection
+from kubernetes.client.models.v1_service_list import V1ServiceList
+from kubernetes.client.models.v1_service_port import V1ServicePort
+from kubernetes.client.models.v1_service_reference import V1ServiceReference
+from kubernetes.client.models.v1_service_spec import V1ServiceSpec
+from kubernetes.client.models.v1_service_status import V1ServiceStatus
 
 base_dir = os.path.dirname(__file__)
 
@@ -56,22 +68,6 @@ class Utils(object):
         return containers
 
     @staticmethod
-    def create_namespace(api_version, kind, namespace):
-        """
-        创建命令空间
-        :param name:
-        :return:
-        """
-        namespace = V1Namespace()
-        namespace.api_version = api_version
-        namespace.kind = kind or 'Namespace'
-        metadata = V1ObjectMeta()
-        spec = V1NamespaceSpec()
-
-        body = ''
-        kclient.create_namespace(body)
-
-    @staticmethod
     def create_pod_by_yaml(yaml_name, namespace):
 
         with open(os.path.join(base_dir, yaml_name)) as f:
@@ -84,12 +80,12 @@ class Utils(object):
                 print('Failed')
 
     @staticmethod
-    def create_deployment(name, image, port, labels, replicas, api_version, deployment_name):
+    def create_deployment(container_name, image, container_port, labels, replicas, api_version, deployment_name):
         """
         创建 Deployment 对象并返回
-        :param name:
+        :param container_name:
         :param image:
-        :param port:
+        :param container_port:
         :param labels:
         :param replicas:
         :param api_version:
@@ -98,9 +94,9 @@ class Utils(object):
         """
         # 配置 Pod 容器模板
         container = kclient.V1Container(
-            name=name,
+            name=container_name,
             image=image,
-            ports=[kclient.V1ContainerPort(container_port=port)]
+            ports=[kclient.V1ContainerPort(container_port=container_port)]
         )
         #
         template = kclient.V1PodTemplateSpec(
@@ -123,23 +119,27 @@ class Utils(object):
         return deployment
 
     @staticmethod
-    def create_namespace(api_version, kind):
-
+    def create_namespace(api_version, kind, namespace):
+        """
+        创建命名空间
+        :param api_version:
+        :param kind:
+        :param namespace:
+        :return:
+        """
         if api_version is None:
             api_version = 'v1'
         if kind is None:
             kind = 'Namespace'
 
-        metadata = ''
-        spec = ''
-        status = ''
+        metadata = kclient.V1ObjectMeta(name=namespace)
+        spec = kclient.V1NamespaceSpec()
+        return kclient.V1Namespace(api_version=api_version, kind=kind, metadata=metadata, spec=spec)
 
-        namespace = kclient.V1Namespace(
-            api_version=api_version,
-            kind=kind,
-            metadata=metadata,
-            spec=spec
-        )
+    @staticmethod
+    def create_service(api_version, kind):
+        pass
 
-        return namespace
-
+    @staticmethod
+    def create_ingress():
+        pass

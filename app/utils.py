@@ -26,6 +26,24 @@ from kubernetes.client.models.v1_service_reference import V1ServiceReference
 from kubernetes.client.models.v1_service_spec import V1ServiceSpec
 from kubernetes.client.models.v1_service_status import V1ServiceStatus
 
+
+from kubernetes.client.models.v1beta1_ingress import V1beta1Ingress
+from kubernetes.client.models.v1beta1_ingress_backend import V1beta1IngressBackend
+from kubernetes.client.models.v1beta1_ingress_list import V1beta1IngressList
+from kubernetes.client.models.v1beta1_ingress_rule import V1beta1IngressRule
+from kubernetes.client.models.v1beta1_ingress_spec import V1beta1IngressSpec
+from kubernetes.client.models.v1beta1_http_ingress_path import V1beta1HTTPIngressPath
+from kubernetes.client.models.v1beta1_http_ingress_rule_value import V1beta1HTTPIngressRuleValue
+from kubernetes.client.models.v1beta1_ip_block import V1beta1IPBlock
+from kubernetes.client.models.v1beta1_ingress import V1beta1Ingress
+from kubernetes.client.models.v1beta1_ingress_backend import V1beta1IngressBackend
+from kubernetes.client.models.v1beta1_ingress_list import V1beta1IngressList
+from kubernetes.client.models.v1beta1_ingress_rule import V1beta1IngressRule
+from kubernetes.client.models.v1beta1_ingress_spec import V1beta1IngressSpec
+from kubernetes.client.models.v1beta1_ingress_status import V1beta1IngressStatus
+from kubernetes.client.models.v1beta1_ingress_tls import V1beta1IngressTLS
+
+
 base_dir = os.path.dirname(__file__)
 
 
@@ -82,7 +100,7 @@ class Utils(object):
     @staticmethod
     def create_deployment(container_name, image, container_port, labels, replicas, api_version, deployment_name):
         """
-        创建 Deployment 对象并返回
+        创建单容器的 Deployment 对象并返回
         :param container_name:
         :param image:
         :param container_port:
@@ -131,15 +149,48 @@ class Utils(object):
             api_version = 'v1'
         if kind is None:
             kind = 'Namespace'
-
-        metadata = kclient.V1ObjectMeta(name=namespace)
+        labels = {'name': namespace}
+        metadata = kclient.V1ObjectMeta(name=namespace, labels=labels)
         spec = kclient.V1NamespaceSpec()
         return kclient.V1Namespace(api_version=api_version, kind=kind, metadata=metadata, spec=spec)
 
     @staticmethod
-    def create_service(api_version, kind):
-        pass
+    def create_service(api_version, kind, name, namespace, service_type, selector):
+        """
+        创建 Service
+        :param api_version:
+        :param kind:
+        :param name:
+        :param namespace:
+        :param service_type:
+        :param selector:
+        :return:
+        """
+        if kind is None:
+            kind = 'Service'
+        if api_version is None:
+            api_version = 'v1'
+        if service_type is None:
+            service_type = 'ClusterIP'
+
+        # 为每一个 Service 指定一个默认的标签：namespace-app: name
+        labels = {namespace + 'app': name}
+        metadata = kclient.V1ObjectMeta(name=name, namespace=namespace, labels=labels)
+        spec = kclient.V1ServiceSpec(selector=selector, type=service_type)
+        return kclient.V1Service(api_version=api_version, kind=kind, metadata=metadata, spec=spec)
 
     @staticmethod
-    def create_ingress():
-        pass
+    def create_ingress(api_version, kind, name, host, path, service_name, service_port):
+        if api_version is None:
+            api_version = 'extensions/v1beta1'
+        if kind is None:
+            kind = 'Ingress'
+        metadata = V1ObjectMeta(name=name)
+        v1beta1_ingress_backend = V1beta1IngressBackend(service_name=service_name, service_port=service_port)
+        v1beta1_http_ingress_path = V1beta1HTTPIngressPath(backend=v1beta1_ingress_backend, path=path)
+        v1beta1_http_ingress_rule_value = V1beta1HTTPIngressRuleValue(list(v1beta1_http_ingress_path))
+        v1beta1_ingress_rule = V1beta1IngressRule(v1beta1_http_ingress_rule_value, host=host)
+
+        rules = list(V1beta1IngressRule())
+        spec = V1beta1IngressSpec(rules=rules)
+        return kclient.V1beta1Ingress(api_version=api_version, kind=kind, metadata=metadata, spec=spec)

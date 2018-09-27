@@ -18,6 +18,7 @@ moment = Moment()
 kubernetes_config.load_kube_config()
 # 创建 kubernetes 客户端对象
 kclient = kubernetes_client.CoreV1Api()
+oclient = kubernetes_client
 
 
 def create_app(config_name):

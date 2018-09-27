@@ -8,12 +8,25 @@ import os
 import yaml
 
 from . import kclient
+from . import oclient
 
 from kubernetes.client.models.v1_namespace import V1Namespace
 from kubernetes.client.models.v1_object_meta import V1ObjectMeta
 from kubernetes.client.models.v1_namespace_spec import V1NamespaceSpec
 from kubernetes.client.models.v1_namespace_status import V1NamespaceStatus
+from kubernetes.client.models.extensions_v1beta1_deployment import ExtensionsV1beta1Deployment
 from kubernetes.client.apis.apiextensions_v1beta1_api import ApiextensionsV1beta1Api
+
+from kubernetes.client.models.v1_container import V1Container
+from kubernetes.client.models.v1_container_image import V1ContainerImage
+from kubernetes.client.models.v1_container_port import V1ContainerPort
+from kubernetes.client.models.extensions_v1beta1_deployment_spec import ExtensionsV1beta1DeploymentSpec
+
+from kubernetes.client.models.v1_pod_template_spec import V1PodTemplateSpec
+
+from kubernetes.client.models.v1_pod_spec import V1PodSpec
+from kubernetes.client.models.v1_pod_status import V1PodStatus
+from kubernetes.client.models.v1_pod_template import V1PodTemplate
 
 
 from kubernetes.client.models.v1_service import V1Service
@@ -42,6 +55,10 @@ from kubernetes.client.models.v1beta1_ingress_rule import V1beta1IngressRule
 from kubernetes.client.models.v1beta1_ingress_spec import V1beta1IngressSpec
 from kubernetes.client.models.v1beta1_ingress_status import V1beta1IngressStatus
 from kubernetes.client.models.v1beta1_ingress_tls import V1beta1IngressTLS
+
+
+from kubernetes.client.models.v1_label_selector import V1LabelSelector
+from kubernetes.client.models.v1_label_selector_requirement import V1LabelSelectorRequirement
 
 
 base_dir = os.path.dirname(__file__)
@@ -98,72 +115,70 @@ class Utils(object):
                 print('Failed')
 
     @staticmethod
-    def create_deployment(container_name, image, container_port, labels, replicas, api_version, deployment_name):
+    def get_deployment(name, replicas, labels, selector, container_name, image, container_port,
+                       api_version=None, kind=None, namespace=None):
         """
-        创建单容器的 Deployment 对象并返回
+        创建单容器的 Deployment 实例并返回。
+        :param api_version:
+        :param name:
+        :param namespace:
+        :param kind:
+        :param replicas:
+        :param labels:
+        :param selector:
         :param container_name:
         :param image:
         :param container_port:
-        :param labels:
-        :param replicas:
-        :param api_version:
-        :param deployment_name:
         :return:
         """
+        if api_version is None:
+            api_version = 'extensions/v1beta1'
+        if kind is None:
+            kind = 'Deployment'
+        if namespace is None:
+            namespace = 'default'
+        print api_version
         # 配置 Pod 容器模板
-        container = kclient.V1Container(
-            name=container_name,
-            image=image,
-            ports=[kclient.V1ContainerPort(container_port=container_port)]
-        )
+        container = V1Container(name=container_name, image=image,
+                                ports=[V1ContainerPort(container_port=container_port)])
         #
-        template = kclient.V1PodTemplateSpec(
-            metadata=kclient.V1ObjectMeta(labels=labels),
-            spec=kclient.V1PodSpec(containers=[container])
-        )
+        template = V1PodTemplateSpec(metadata=V1ObjectMeta(labels=labels), spec=V1PodSpec(containers=[container]))
 
-        spec = kclient.ExtensionsV1Beta1DeploymentSpec(
-            replicas=replicas,
-            template=template
-        )
-        # 实例化 Deployment 对象
-        deployment = kclient.ExtensionsV1beta1Deployment(
-            api_version=api_version,
-            kind='Deployment',
-            metadata=kclient.V1ObjectMeta(name=deployment_name),
-            spec=spec
-        )
-
-        return deployment
+        metadata = V1ObjectMeta(name=name, namespace=namespace, labels=labels)
+        selector = V1LabelSelector(match_labels=selector)
+        spec = ExtensionsV1beta1DeploymentSpec(replicas=replicas, selector=selector, template=template)
+        # 实例化 Deployment 并返回。
+        return ExtensionsV1beta1Deployment(api_version=api_version, kind=kind, metadata=metadata, spec=spec)
 
     @staticmethod
-    def create_namespace(api_version, kind, namespace):
+    def get_namespace(name, api_version=None, kind=None):
         """
-        创建命名空间
+        创建命名空间实例并返回。
         :param api_version:
         :param kind:
-        :param namespace:
+        :param name:
         :return:
         """
         if api_version is None:
             api_version = 'v1'
         if kind is None:
             kind = 'Namespace'
-        labels = {'name': namespace}
-        metadata = kclient.V1ObjectMeta(name=namespace, labels=labels)
-        spec = kclient.V1NamespaceSpec()
-        return kclient.V1Namespace(api_version=api_version, kind=kind, metadata=metadata, spec=spec)
+        # 为每一个命名空间添加默认的标签 name:${name}
+        labels = {'name': name}
+        metadata = V1ObjectMeta(name=name, labels=labels)
+        spec = V1NamespaceSpec()
+        return V1Namespace(api_version=api_version, kind=kind, metadata=metadata, spec=spec)
 
     @staticmethod
-    def create_service(api_version, kind, name, namespace, service_type, selector):
+    def get_service(name, selector, port, api_version=None, kind=None, namespace=None, service_type=None):
         """
-        创建 Service
+        创建 Service 实例并返回。
+        :param selector:
+        :param port:
         :param api_version:
         :param kind:
-        :param name:
         :param namespace:
         :param service_type:
-        :param selector:
         :return:
         """
         if kind is None:
@@ -172,25 +187,44 @@ class Utils(object):
             api_version = 'v1'
         if service_type is None:
             service_type = 'ClusterIP'
+        if namespace is None:
+            namespace = 'default'
 
         # 为每一个 Service 指定一个默认的标签：namespace-app: name
         labels = {namespace + 'app': name}
-        metadata = kclient.V1ObjectMeta(name=name, namespace=namespace, labels=labels)
-        spec = kclient.V1ServiceSpec(selector=selector, type=service_type)
-        return kclient.V1Service(api_version=api_version, kind=kind, metadata=metadata, spec=spec)
+        metadata = V1ObjectMeta(name=name, namespace=namespace, labels=labels)
+
+        port = V1ServicePort(port=port)
+
+        spec = V1ServiceSpec(selector=selector, type=service_type, ports=[port, ])
+        return V1Service(api_version=api_version, kind=kind, metadata=metadata, spec=spec)
 
     @staticmethod
-    def create_ingress(api_version, kind, name, host, path, service_name, service_port):
+    def get_ingress(name, host, path, service_name, service_port, api_version=None, kind=None, namespace=None):
+        """
+        创建 Ingress 实例并返回。
+        :param name:
+        :param host:
+        :param path:
+        :param service_name:
+        :param service_port:
+        :param api_version:
+        :param kind:
+        :param namespace:
+        :return:
+        """
         if api_version is None:
             api_version = 'extensions/v1beta1'
         if kind is None:
             kind = 'Ingress'
-        metadata = V1ObjectMeta(name=name)
+        if namespace is None:
+            namespace = 'default'
+        metadata = V1ObjectMeta(name=name, namespace=namespace)
         v1beta1_ingress_backend = V1beta1IngressBackend(service_name=service_name, service_port=service_port)
         v1beta1_http_ingress_path = V1beta1HTTPIngressPath(backend=v1beta1_ingress_backend, path=path)
-        v1beta1_http_ingress_rule_value = V1beta1HTTPIngressRuleValue(list(v1beta1_http_ingress_path))
-        v1beta1_ingress_rule = V1beta1IngressRule(v1beta1_http_ingress_rule_value, host=host)
+        v1beta1_http_ingress_rule_value = V1beta1HTTPIngressRuleValue([v1beta1_http_ingress_path, ])
+        v1beta1_ingress_rule = V1beta1IngressRule(host=host, http=v1beta1_http_ingress_rule_value)
 
-        rules = list(V1beta1IngressRule())
+        rules = [v1beta1_ingress_rule, ]
         spec = V1beta1IngressSpec(rules=rules)
-        return kclient.V1beta1Ingress(api_version=api_version, kind=kind, metadata=metadata, spec=spec)
+        return V1beta1Ingress(api_version=api_version, kind=kind, metadata=metadata, spec=spec)

@@ -9,57 +9,26 @@ import yaml
 import logging
 
 from . import kclient
-from . import oclient
 
 from kubernetes.client.models.v1_namespace import V1Namespace
 from kubernetes.client.models.v1_object_meta import V1ObjectMeta
 from kubernetes.client.models.v1_namespace_spec import V1NamespaceSpec
-from kubernetes.client.models.v1_namespace_status import V1NamespaceStatus
 from kubernetes.client.models.extensions_v1beta1_deployment import ExtensionsV1beta1Deployment
-from kubernetes.client.apis.apiextensions_v1beta1_api import ApiextensionsV1beta1Api
-
 from kubernetes.client.models.v1_container import V1Container
-from kubernetes.client.models.v1_container_image import V1ContainerImage
 from kubernetes.client.models.v1_container_port import V1ContainerPort
 from kubernetes.client.models.extensions_v1beta1_deployment_spec import ExtensionsV1beta1DeploymentSpec
-
 from kubernetes.client.models.v1_pod_template_spec import V1PodTemplateSpec
-
 from kubernetes.client.models.v1_pod_spec import V1PodSpec
-from kubernetes.client.models.v1_pod_status import V1PodStatus
-from kubernetes.client.models.v1_pod_template import V1PodTemplate
-
-
 from kubernetes.client.models.v1_service import V1Service
-from kubernetes.client.models.v1_service_account import V1ServiceAccount
-from kubernetes.client.models.v1_service_account_list import V1ServiceAccountList
-from kubernetes.client.models.v1_service_account_token_projection import V1ServiceAccountTokenProjection
-from kubernetes.client.models.v1_service_list import V1ServiceList
 from kubernetes.client.models.v1_service_port import V1ServicePort
-from kubernetes.client.models.v1_service_reference import V1ServiceReference
 from kubernetes.client.models.v1_service_spec import V1ServiceSpec
-from kubernetes.client.models.v1_service_status import V1ServiceStatus
-
-
-from kubernetes.client.models.v1beta1_ingress import V1beta1Ingress
-from kubernetes.client.models.v1beta1_ingress_backend import V1beta1IngressBackend
-from kubernetes.client.models.v1beta1_ingress_list import V1beta1IngressList
-from kubernetes.client.models.v1beta1_ingress_rule import V1beta1IngressRule
-from kubernetes.client.models.v1beta1_ingress_spec import V1beta1IngressSpec
 from kubernetes.client.models.v1beta1_http_ingress_path import V1beta1HTTPIngressPath
 from kubernetes.client.models.v1beta1_http_ingress_rule_value import V1beta1HTTPIngressRuleValue
-from kubernetes.client.models.v1beta1_ip_block import V1beta1IPBlock
 from kubernetes.client.models.v1beta1_ingress import V1beta1Ingress
 from kubernetes.client.models.v1beta1_ingress_backend import V1beta1IngressBackend
-from kubernetes.client.models.v1beta1_ingress_list import V1beta1IngressList
 from kubernetes.client.models.v1beta1_ingress_rule import V1beta1IngressRule
 from kubernetes.client.models.v1beta1_ingress_spec import V1beta1IngressSpec
-from kubernetes.client.models.v1beta1_ingress_status import V1beta1IngressStatus
-from kubernetes.client.models.v1beta1_ingress_tls import V1beta1IngressTLS
-
-
 from kubernetes.client.models.v1_label_selector import V1LabelSelector
-from kubernetes.client.models.v1_label_selector_requirement import V1LabelSelectorRequirement
 
 
 base_dir = os.path.dirname(__file__)
@@ -258,3 +227,5 @@ class Utils(object):
         logger.addHandler(stream_handler)
 
         return logger
+
+    logger = Utils.get_logger()

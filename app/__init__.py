@@ -9,8 +9,6 @@ from config import config
 from kubernetes import config as kubernetes_config
 from kubernetes import client as kubernetes_client
 
-from .utils import Utils
-
 bootstrap = Bootstrap()
 db = SQLAlchemy()
 moment = Moment()
@@ -22,7 +20,6 @@ kclient = kubernetes_client.CoreV1Api()
 oclient = kubernetes_client
 
 # 日志记录器
-logger = Utils.get_logger()
 
 
 def create_app(config_name):

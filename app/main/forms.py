@@ -11,8 +11,10 @@ from wtforms.validators import DataRequired
 from wtforms.validators import Length
 
 
-class Deployment(FlaskForm):
-    image_name = StringField('镜像名称', validators=[DataRequired()])
-    replicas = IntegerField('副本数量', validators=[DataRequired()])
+class DeploymentForm(FlaskForm):
+    pod_name = StringField('服务名称', validators=[DataRequired()])
+    pod_image_name = StringField('镜像名称', validators=[DataRequired()])
+    pod_replicas = IntegerField('副本数量', validators=[DataRequired()])
+    container_port = IntegerField('容器端口', validators=[DataRequired()])
     submit = SubmitField('创建')
 

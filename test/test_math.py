@@ -25,19 +25,18 @@ class TestMathFunc(unittest.TestCase):
 
     def test_divide(self):
         self.assertEqual(2, divide(6, 3))
-        #self.assertEqual(2.5, divide(5, 2))
 
     def tearDown(self):
         pass
 
 
 if __name__ == '__main__':
-
+    """
     test_runner = unittest.TextTestRunner()
     test_suite = unittest.TestSuite()
     test_suite.addTests(map(TestMathFunc, ['test_add', 'test_minus', 'test_multi', 'test_divide']))
     test_runner.run(test_suite)
-
-    # unittest.main(verbosity=2)
+    """
+    unittest.main(verbosity=2)
 
 

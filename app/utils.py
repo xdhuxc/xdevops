@@ -72,6 +72,18 @@ class Utils(object):
         return containers
 
     @staticmethod
+    def get_all_namespaces():
+        """
+        获取所有的命名空间。
+        :return:
+        """
+        namespace_list = []
+        namespaces = kclient.list_namespace()
+        for item in namespaces.items:
+            namespace_list.append(item.metadata.name)
+        return namespace_list
+
+    @staticmethod
     def create_pod_by_yaml(yaml_name, namespace):
 
         with open(os.path.join(base_dir, yaml_name)) as f:

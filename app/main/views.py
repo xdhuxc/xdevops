@@ -10,11 +10,14 @@ from flask import redirect
 from flask import current_app
 
 from . import main
-from .. import config
 from kubernetes import client
 
 from ..utils import Utils
+from ..models import Deployment
 from .. import kclient
+from forms import DeploymentForm
+
+
 
 CHARSET = os.environ.get('CHARSET') or 'utf-8'
 reload(sys)
@@ -317,3 +320,17 @@ def get_pod_terminal(namespace, name):
         current_app.config['KUBERNETES_MASTER'] + ':' + str(current_app.config['GOTTY_POD_PORT'])
     pod_terminal_url = pod_terminal_url_prefix + '/?arg=%s&arg=-n&arg=%s&arg=sh' % (name, namespace)
     return redirect(pod_terminal_url)
+
+
+@main.route('/deployment', methods=['GET', 'POST'])
+def create_deployment():
+    form = DeploymentForm()
+    deployment = Deployment()
+    if form.validate_on_submit():
+        deployment.pod_name = form.pod_name
+        deployment.pod_image_name = form.pod_image_name
+        deployment.pod_replicas = form.pod_replicas
+        deployment.container_port = form.container_port
+        print(deployment)
+
+    return render_template('deployment.html', form=form)

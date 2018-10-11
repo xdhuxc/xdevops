@@ -18,7 +18,7 @@ moment = Moment()
 kubernetes_config.load_kube_config()
 # 创建 kubernetes 客户端对象
 kclient = kubernetes_client.CoreV1Api()
-oclient = kubernetes_client
+original_client = kubernetes_client
 
 
 def create_app(config_name):
@@ -61,7 +61,7 @@ def create_logger():
 
     # 给 logger 添加处理器
     logger.addHandler(file_handler)
-    logger.addHandler(stream_handler)
+    # logger.addHandler(stream_handler)
 
     return logger
 

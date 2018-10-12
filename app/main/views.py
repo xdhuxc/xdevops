@@ -326,11 +326,13 @@ def get_pod_terminal(namespace, name):
 def create_deployment():
     form = DeploymentForm()
     deployment = Deployment()
+    form.pod_namespace.choices = Utils.get_all_namespaces()
     if form.validate_on_submit():
-        deployment.pod_name = form.pod_name
-        deployment.pod_image_name = form.pod_image_name
-        deployment.pod_replicas = form.pod_replicas
-        deployment.container_port = form.container_port
-        print(deployment)
+        deployment.pod_name = form.pod_name.data
+        deployment.pod_image_name = form.pod_image_name.data
+        deployment.pod_replicas = form.pod_replicas.data
+        deployment.container_port = form.container_port.data
+        deployment.pod_namespace = form.pod_namespace.data
+        print(deployment.to_json())
 
     return render_template('deployment.html', form=form)

@@ -14,12 +14,13 @@ class Deployment(db.Model):
     pod_name = db.Column(db.String(120), unique=True, comment='Pod 名称')
     pod_image_name = db.Column(db.Text, comment='镜像名称')
     pod_replicas = db.Column(db.Integer, comment='Pod 副本')
+    pod_namespace = db.Column(db.String(150), comment='Pod 所属命名空间')
     container_port = db.Column(db.Integer, comment='容器端口')
 
     def __init__(self, **kwargs):
         super(Deployment, self).__init__(**kwargs)
 
-    def __repr__(self):
+    def to_json(self):
         """
         输出该对象的 JSON 格式。
         :return:
@@ -29,8 +30,25 @@ class Deployment(db.Model):
             'pod_name': self.pod_name,
             'pod_image_name': self.pod_image_name,
             'pod_replicas': self.pod_replicas,
+            'pod_namespace': self.pod_namespace,
             'container_port': self.container_port
         }
+        return deployment_json
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def __repr__(self):
+
         return json.dumps(deployment_json)
 
 

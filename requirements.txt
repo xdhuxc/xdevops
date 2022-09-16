@@ -20,7 +20,7 @@ ipaddress==1.0.22
 itsdangerous==0.24
 Jinja2==2.10
 kubernetes==7.0.0
-Mako==1.0.7
+Mako==1.2.2
 MarkupSafe==1.0
 oauthlib==2.1.0
 pyasn1==0.4.4
